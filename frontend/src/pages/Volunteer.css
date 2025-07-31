@@ -1,0 +1,350 @@
+.volunteer-page {
+  padding-bottom: 5rem;
+}
+
+.volunteer-section {
+  padding: 5rem 0;
+}
+
+.volunteer-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.volunteer-info h2 {
+  font-size: 2.8rem;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.volunteer-description {
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.requirements {
+  margin-bottom: 2rem;
+}
+
+.requirements h3 {
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+}
+
+.requirements-list {
+  list-style: none;
+  padding: 0;
+}
+
+.requirements-list li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-light);
+}
+
+.requirements-list i {
+  color: var(--secondary-color);
+}
+
+.volunteer-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.volunteer-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Volunteer Form Container */
+.volunteer-form-container {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+/* Form Steps */
+.form-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--text-light);
+  position: relative;
+  flex: 1;
+  text-align: center;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -50%;
+  top: 15px;
+  width: 100%;
+  height: 2px;
+  background: #eee;
+  z-index: 1;
+}
+
+.step.active:not(:last-child)::after {
+  background: var(--primary-color);
+}
+
+.step.active {
+  color: var(--primary-color);
+}
+
+.step-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+  background: var(--primary-color);
+  color: white;
+  transform: scale(1.1);
+}
+
+.step-title {
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+/* Form Content */
+.form-step {
+  animation: fadeIn 0.5s ease;
+}
+
+.form-step h3 {
+  color: var(--text-dark);
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(1, 110, 92, 0.1);
+}
+
+/* Button Styles */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.back-btn,
+.next-btn,
+.submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn {
+  background: #f0f0f0;
+  color: var(--text-dark);
+}
+
+.next-btn,
+.submit-btn {
+  background: var(--primary-color);
+  color: white;
+  margin-left: auto;
+}
+
+.back-btn:hover,
+.next-btn:hover,
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.next-btn:hover,
+.submit-btn:hover {
+  background: var(--primary-dark);
+}
+
+/* Info Section */
+.volunteer-info {
+  padding-right: 4rem;
+}
+
+.volunteer-info h2 {
+  font-size: 2.8rem;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.volunteer-description {
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.requirements {
+  margin-bottom: 2rem;
+}
+
+.requirements h3 {
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+}
+
+.requirements-list {
+  list-style: none;
+  padding: 0;
+}
+
+.requirements-list li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-light);
+}
+
+.requirements-list i {
+  color: var(--secondary-color);
+}
+
+.volunteer-images {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.volunteer-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .volunteer-content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .volunteer-info {
+    padding-right: 0;
+  }
+
+  .volunteer-info h2 {
+    font-size: 2.3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .next-btn,
+  .submit-btn {
+    margin-left: 0;
+  }
+
+  .step-title {
+    display: none;
+  }
+
+  .step:not(:last-child)::after {
+    right: -25%;
+    width: 50%;
+  }
+}
+
+@media (max-width: 480px) {
+  .step-title {
+    display: none;
+  }
+
+  .step {
+    justify-content: center;
+  }
+} 

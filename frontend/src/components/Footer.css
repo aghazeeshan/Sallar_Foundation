@@ -1,0 +1,245 @@
+.footer {
+  background-color: #012a23;
+  color: #fff;
+  padding: 5rem 0 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  gap: 4rem;
+}
+
+
+/* Logo & Description */
+.footer-logo {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  text-decoration: none;
+}
+
+.logo-text {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-description {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+/* Footer Links & Services */
+.footer h3 {
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.footer h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  height: 2px;
+  background-color: var(--secondary-color);
+}
+
+.footer-links ul,
+.footer-services ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li,
+.footer-services li {
+  margin-bottom: 1rem;
+}
+
+.footer-links a,
+.footer-services a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover,
+.footer-services a:hover {
+  color: var(--secondary-color);
+  transform: translateX(5px);
+}
+
+.footer a{
+  text-decoration: none;
+}
+ 
+.footer-links i,
+.footer-services i {
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+}
+
+/* Newsletter */
+.footer-newsletter p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.newsletter-form {
+  display: flex;
+  margin-bottom: 1.5rem;
+}
+
+.newsletter-form input {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border: none;
+  border-radius: 50px 0 0 50px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.newsletter-form input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.newsletter-form button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 0 50px 50px 0;
+  background: var(--secondary-color);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.newsletter-form button:hover {
+  background: var(--secondary-dark);
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-links a {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+  background: var(--secondary-color);
+  transform: translateY(-3px);
+}
+
+/* Copyright Bar */
+.copyright-bar {
+  background-color: #015a4b;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 1.5rem 0;
+  text-align: center;
+}
+
+.copyright-bar span {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+.footer-copyright{
+  color: white;
+  text-decoration: none;
+}
+.footer-copyright a{
+  
+  text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    justify-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 3rem 0 2rem;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-about {
+    text-align: center;
+  }
+
+  .footer h3::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .contact-info {
+    align-items: center;
+  }
+
+  .footer-links ul,
+  .footer-services ul {
+    text-align: center;
+  }
+
+  .footer-links a,
+  .footer-services a {
+    justify-content: center;
+  }
+
+  .footer-newsletter {
+    text-align: center;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+}
+
+.admin-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.admin-link:hover {
+  color: var(--secondary-color);
+}
+
+.admin-link i {
+  font-size: 1.1rem;
+} 

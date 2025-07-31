@@ -1,0 +1,213 @@
+:root {
+  --primary-color: #012a23;
+  --primary-dark: #012a23;
+  --secondary-color: #eb9801;
+  --secondary-dark: #d88a00;
+  --text-dark: #333;
+  --text-light: #666;
+  --white: #fff;
+  --bg-light: #f8f9fa;
+}
+
+/* Apply variables to common elements */
+.admin-sidebar {
+  background: var(--primary-color);
+}
+
+.stat-icon i {
+  color: var(--secondary-color);
+}
+
+.stat-box {
+  background: var(--white);
+}
+
+.stat-details h3 {
+  color: var(--text-light);
+}
+
+.stat-details h2 {
+  color: var(--text-dark);
+}
+
+.top-bar {
+  background-color: var(--primary-color);
+}
+
+.top-bar-btn {
+  background-color: var(--secondary-color);
+}
+
+.main-nav a {
+  color: var(--text-dark);
+}
+
+.main-nav a:hover {
+  color: var(--primary-color);
+}
+
+.content-header h1 {
+  color: var(--text-dark);
+}
+
+.content-header p {
+  color: var(--text-light);
+}
+
+.filter-btn.active {
+  background: var(--primary-color);
+}
+
+.action-buttons button {
+  color: var(--text-dark);
+}
+
+.action-buttons button:hover {
+  color: var(--primary-color);
+}
+
+.status-badge {
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+
+/* Add more global color applications */
+button.primary {
+  background: var(--primary-color);
+  color: var(--white);
+}
+
+button.secondary {
+  background: var(--secondary-color);
+  color: var(--white);
+}
+
+.text-primary {
+  color: var(--primary-color);
+}
+
+.text-secondary {
+  color: var(--secondary-color);
+}
+
+.bg-primary {
+  background: var(--primary-color);
+}
+
+.bg-secondary {
+  background: var(--secondary-color);
+}
+
+/* Add CSS variables to all relevant elements */
+.btn, 
+.button,
+.primary-btn,
+.submit-btn,
+.save-btn {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.secondary-btn,
+.preview-btn.secondary {
+  background-color: var(--secondary-color);
+  color: var(--white);
+}
+
+.text-dark,
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-dark);
+}
+
+.text-light,
+p, .description {
+  color: var(--text-light);
+}
+
+.bg-light {
+  background-color: var(--bg-light);
+}
+
+/* Add hover states */
+.btn:hover,
+.button:hover,
+.primary-btn:hover,
+.submit-btn:hover,
+.save-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+.secondary-btn:hover {
+  background-color: var(--secondary-dark);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+  width: 100%;
+  padding: 0 5rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+body.admin-mode .navbar,
+body.admin-mode .footer {
+  display: none !important;
+}
+
+body.admin-mode {
+  background: #f8f9fa;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body.admin-mode #root,
+body.admin-mode .App {
+  min-height: 100vh;
+}
+
+.admin-mode header,
+.admin-mode footer,
+.admin-mode .navbar,
+.admin-mode .footer,
+.admin-mode .topbar,
+.admin-mode .top-bar,
+.admin-mode .main-header {
+  display: none !important;
+}
+
+.App.admin-mode {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.admin-dashboard {
+  min-height: 100vh;
+}
+
+/* Add these color utility classes */
+[class*="color-primary"] { color: var(--primary-color) !important; }
+[class*="color-secondary"] { color: var(--secondary-color) !important; }
+[class*="color-dark"] { color: var(--text-dark) !important; }
+[class*="color-light"] { color: var(--text-light) !important; }
+[class*="bg-primary"] { background-color: var(--primary-color) !important; }
+[class*="bg-secondary"] { background-color: var(--secondary-color) !important; }
+
+/* Force color updates */
+[style*="color"] { color: var(--text-dark); }
+[style*="background"] { background-color: var(--bg-light); }
+
+/* Add hover states */
+.hover-primary:hover { color: var(--primary-color) !important; }
+.hover-secondary:hover { color: var(--secondary-color) !important; }
+.bg-hover-primary:hover { background-color: var(--primary-color) !important; }
+.bg-hover-secondary:hover { background-color: var(--secondary-color) !important; } 

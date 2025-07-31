@@ -1,0 +1,24 @@
+:root {
+  --primary-color: #012a23;
+  --primary-dark: #012a23;
+  --secondary-color: #eb9801;
+  --secondary-dark: #d88a00;
+  --text-dark: #333;
+  --text-light: #666;
+  --white: #fff;
+  --bg-light: #f8f9fa;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text-dark);
+}
+
+/* Add your other global styles here */ 

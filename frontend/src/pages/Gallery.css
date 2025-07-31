@@ -1,0 +1,30 @@
+.gallery-page {
+  padding-bottom: 5rem;
+}
+
+.gallery-page .gallery-section {
+  padding-top: 3rem;
+}
+
+.gallery-page .gallery-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  .gallery-page .gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-page .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-page .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+} 

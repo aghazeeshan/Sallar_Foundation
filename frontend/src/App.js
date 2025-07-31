@@ -1,0 +1,109 @@
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import About from './pages/About';
+import Causes from './pages/Causes';
+import Donate from './pages/Donate';
+import Events from './pages/Events';
+import Contact from './pages/Contact';
+import Volunteer from './pages/Volunteer';
+import Gallery from './pages/Gallery';
+import BlogDetails from './pages/BlogDetails';
+import AdminDashboard from './admin/AdminDashboard';
+import CategoryPage from './pages/CategoryPage';
+import BlogPosts from './admin/pages/BlogPosts';
+import Health from './pages/Health';
+import Services from './pages/Services';
+import './App.css';
+import './styles/global.css';
+import Footer from './components/Footer';
+
+function App() {
+  const [isAdminMode, setIsAdminMode] = useState(false);
+
+  // Helper function to adjust color brightness
+  const adjustColor = (color, percent) => {
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = (num >> 8 & 0x00FF) + amt;
+    const B = (num & 0x0000FF) + amt;
+
+    return '#' + (
+      0x1000000 +
+      (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+      (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+      (B < 255 ? (B < 1 ? 0 : B) : 255)
+    ).toString(16).slice(1);
+  };
+
+  // Check if we're in admin route
+  useEffect(() => {
+    const path = window.location.pathname;
+    setIsAdminMode(path.includes('/admin'));
+
+    // Add/remove admin-mode class on body
+    if (path.includes('/admin')) {
+      document.body.classList.add('admin-mode');
+    } else {
+      document.body.classList.remove('admin-mode');
+    }
+  }, []);
+
+  useEffect(() => {
+    const savedColors = localStorage.getItem('themeColors');
+    if (savedColors) {
+      const colors = JSON.parse(savedColors);
+      Object.entries(colors).forEach(([property, value]) => {
+        document.documentElement.style.setProperty(`--${property}`, value);
+        switch(property) {
+          case 'primaryColor':
+            document.documentElement.style.setProperty('--primary-dark', value);
+            document.documentElement.style.setProperty('--primary-hover', adjustColor(value, -10));
+            break;
+          case 'secondaryColor':
+            document.documentElement.style.setProperty('--secondary-dark', adjustColor(value, -20));
+            document.documentElement.style.setProperty('--secondary-hover', adjustColor(value, -10));
+            break;
+          default:
+            break;
+        }
+      });
+
+      // Force update on all color-related elements
+      const elementsToUpdate = document.querySelectorAll('[class*="color"], [class*="bg-"], [style*="color"], [style*="background"]');
+      elementsToUpdate.forEach(element => {
+        element.style.color = '';
+        element.style.backgroundColor = '';
+      });
+    }
+  }, []);
+
+  return (
+    <Router>
+      <div className={`App ${isAdminMode ? 'admin-mode' : ''}`}>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/causes" element={<Causes />} />
+          <Route path="/donate" element={<Donate />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/volunteer" element={<Volunteer />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/blog/:id" element={<BlogDetails />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard setIsAdminMode={setIsAdminMode} />} />
+          <Route path="/category/:categoryId" element={<CategoryPage />} />
+          <Route path="/admin/blog-posts" element={<BlogPosts />} />
+          <Route path="/health" element={<Health />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
+  );
+}
+
+export default App;

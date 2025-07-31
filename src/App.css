@@ -1,0 +1,22 @@
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-mode {
+  background: #f8f9fa;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    max-width: 100%;
+  }
+} 

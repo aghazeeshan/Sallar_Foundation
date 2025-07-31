@@ -1,0 +1,78 @@
+.donation-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.donation-modal h2 {
+  margin-bottom: 2rem;
+  color: var(--text-dark);
+  text-align: center;
+}
+
+.modal-section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.modal-section h3 {
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-section h3 i {
+  color: var(--secondary-color);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.info-item label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+.info-item p {
+  font-size: 1rem;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.info-item .amount {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.donation-message {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  color: var(--text-dark);
+}
+
+@media (max-width: 768px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+} 

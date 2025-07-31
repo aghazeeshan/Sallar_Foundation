@@ -1,0 +1,73 @@
+/* Shared Contact Information Styles */
+.contact-info {
+  display: flex;
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.contact-item i {
+  color: var(--secondary-color);
+}
+
+.contact-item a {
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+/* Header Contact Info */
+.header-contact-info {
+  display: flex;
+  gap: 2rem;
+}
+
+.header-contact-item {
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+}
+
+.header-contact-item a {
+  color: #ffffff;
+  padding-left: 10px;
+  text-decoration: none;
+}
+.header-contact-item a:hover {
+  color: var(--secondary-color);
+  
+}
+
+/* Footer Contact Info */
+.footer-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer-contact-item {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-contact-item a {
+  color: #fff;
+}
+
+.footer-contact-item a:hover {
+  color: var(--secondary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .header-contact-info {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-contact-info {
+    align-items: center;
+  }
+} 
