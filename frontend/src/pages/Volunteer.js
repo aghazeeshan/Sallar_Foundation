@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { volunteerService } from '../services/volunteerService';
 import './Volunteer.css';
 import Breadcrumb from '../components/Breadcrumb';
 import VolunteerSuccessModal from '../components/VolunteerSuccessModal';
@@ -6,18 +7,17 @@ import VolunteerSuccessModal from '../components/VolunteerSuccessModal';
 const Volunteer = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     phone: '',
+    age: '',
     address: '',
-    occupation: '',
     skills: '',
-    interests: '',
-    availability: '',
-    hours: '',
     experience: '',
-    message: ''
+    availability: '',
+    motivation: '',
+    emergency_contact: '',
+    emergency_phone: ''
   });
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -30,36 +30,53 @@ const Volunteer = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const volunteers = JSON.parse(localStorage.getItem('volunteers') || '[]');
-    const newVolunteer = {
-      id: Date.now(),
-      ...formData,
-      date: new Date().toISOString(),
-      status: 'pending'
-    };
-    
-    volunteers.push(newVolunteer);
-    localStorage.setItem('volunteers', JSON.stringify(volunteers));
-    
-    setShowSuccessModal(true);
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      address: '',
-      occupation: '',
-      skills: '',
-      interests: '',
-      availability: '',
-      hours: '',
-      experience: '',
-      message: ''
-    });
-    setStep(1);
+    try {
+      // Prepare volunteer data for database
+      const volunteerData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        age: formData.age ? parseInt(formData.age) : null,
+        address: formData.address,
+        skills: formData.skills,
+        experience: formData.experience,
+        availability: formData.availability,
+        motivation: formData.motivation,
+        emergency_contact: formData.emergency_contact,
+        emergency_phone: formData.emergency_phone
+      };
+
+      // Save to database
+      const result = await volunteerService.createVolunteer(volunteerData);
+      console.log('Volunteer application saved to database:', result);
+      
+      // Show success modal
+      setShowSuccessModal(true);
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        age: '',
+        address: '',
+        skills: '',
+        experience: '',
+        availability: '',
+        motivation: '',
+        emergency_contact: '',
+        emergency_phone: ''
+      });
+
+      // Reset step to 1
+      setStep(1);
+    } catch (error) {
+      console.error('Error saving volunteer application:', error);
+      alert('Failed to submit volunteer application. Please try again.');
+    }
   };
 
   const nextStep = () => {
@@ -78,23 +95,24 @@ const Volunteer = () => {
             <h3>Personal Information</h3>
             <div className="form-grid">
               <div className="form-group">
-                <label>First Name</label>
+                <label>Full Name</label>
                 <input
                   type="text"
-                  name="firstName"
-                  value={formData.firstName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleInputChange}
                   required
                 />
               </div>
               <div className="form-group">
-                <label>Last Name</label>
+                <label>Age</label>
                 <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
+                  type="number"
+                  name="age"
+                  value={formData.age}
                   onChange={handleInputChange}
-                  required
+                  min="16"
+                  max="100"
                 />
               </div>
             </div>
@@ -143,13 +161,13 @@ const Volunteer = () => {
           <div className="form-step">
             <h3>Skills & Experience</h3>
             <div className="form-group">
-              <label>Occupation</label>
-              <input
-                type="text"
-                name="occupation"
-                value={formData.occupation}
+              <label>Experience</label>
+              <textarea
+                name="experience"
+                value={formData.experience}
                 onChange={handleInputChange}
-                required
+                rows="3"
+                placeholder="Describe your relevant experience..."
               />
             </div>
 
@@ -166,13 +184,13 @@ const Volunteer = () => {
             </div>
 
             <div className="form-group">
-              <label>Areas of Interest</label>
-              <input
-                type="text"
-                name="interests"
-                value={formData.interests}
+              <label>Motivation</label>
+              <textarea
+                name="motivation"
+                value={formData.motivation}
                 onChange={handleInputChange}
-                placeholder="e.g., Education, Healthcare, Environment"
+                rows="3"
+                placeholder="Why do you want to volunteer with us?"
                 required
               />
             </div>
@@ -218,26 +236,25 @@ const Volunteer = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label>Hours per Week</label>
+                <label>Emergency Contact Name</label>
                 <input
-                  type="number"
-                  name="hours"
-                  value={formData.hours}
+                  type="text"
+                  name="emergency_contact"
+                  value={formData.emergency_contact}
                   onChange={handleInputChange}
-                  min="1"
-                  required
+                  placeholder="Emergency contact person"
                 />
               </div>
             </div>
 
             <div className="form-group">
-              <label>Message</label>
-              <textarea
-                name="message"
-                value={formData.message}
+              <label>Emergency Contact Phone</label>
+              <input
+                type="tel"
+                name="emergency_phone"
+                value={formData.emergency_phone}
                 onChange={handleInputChange}
-                rows="4"
-                placeholder="Tell us why you want to volunteer..."
+                placeholder="Emergency contact phone number"
               />
             </div>
 

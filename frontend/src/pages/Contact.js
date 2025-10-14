@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
+import { contactFormService } from '../services/contactFormService';
 import './Contact.css';
 import ContactSuccessModal from '../components/ContactSuccessModal';
 
@@ -8,6 +9,8 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
+    subject: '',
     message: '',
   });
 
@@ -18,27 +21,24 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/submit-form', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          message: formData.message
-        }),
+      const result = await contactFormService.createContactForm(formData);
+      console.log('Contact form saved to database:', result);
+      
+      setShowSuccessModal(true);
+      setFormData({ 
+        name: '', 
+        email: '', 
+        phone: '', 
+        subject: '', 
+        message: '' 
       });
-
-      if (response.ok) {
-        alert('Form submitted successfully!');
-        setFormData({ name: '', email: '', message: '' }); // Reset form
-      } else {
-        alert('Failed to submit form.');
-      }
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert('Error submitting form.');
+      if (error.message.includes('Validation failed')) {
+        alert('Please fill in all required fields correctly.');
+      } else {
+        alert('Error submitting form. Please try again.');
+      }
     }
   };
 
@@ -136,6 +136,26 @@ const Contact = () => {
                     onChange={handleChange} 
                     placeholder="Email Address" 
                     required 
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <input 
+                    type="tel" 
+                    name="phone" 
+                    value={formData.phone} 
+                    onChange={handleChange} 
+                    placeholder="Phone Number (Optional)" 
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <input 
+                    type="text" 
+                    name="subject" 
+                    value={formData.subject} 
+                    onChange={handleChange} 
+                    placeholder="Subject (Optional)" 
                   />
                 </div>
                 

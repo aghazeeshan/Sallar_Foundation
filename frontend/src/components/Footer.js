@@ -98,7 +98,7 @@ const Footer = () => {
       {/* Copyright Bar */}
       <div className="copyright-bar">
         <div className="container">
-          <p class="footer-copyright">Copyright 2024 All Rights Reserved. Developed & Maintance by  <a href='www.keplerx.co'><span> KeplerX </span> </a></p>
+          <p className="footer-copyright">Copyright 2024 All Rights Reserved. Developed & Maintance by  <a href='www.keplerx.co'><span> KeplerX </span> </a></p>
         </div>
       </div>
 

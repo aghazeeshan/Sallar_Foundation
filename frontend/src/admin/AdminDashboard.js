@@ -6,14 +6,35 @@ import EventForm from './components/EventForm';
 import PostForm from './components/PostForm';
 import EditPostForm from './components/EditPostForm';
 import DonationDetailsModal from './components/DonationDetailsModal';
+import ContactDetailsModal from '../components/ContactDetailsModal';
+import AdminManagement from './components/AdminManagement';
+import BannerForm from './components/BannerForm';
+import BannerDataTable from './components/BannerDataTable';
+import ServiceForm from './components/ServiceForm';
+import ServiceDataTable from './components/ServiceDataTable';
 import { generateVolunteerPDF } from '../utils/generateVolunteerPDF';
 import VolunteerDetailsModal from '../components/VolunteerDetailsModal';
+import { bannerService } from '../services/bannerService';
+import { serviceService } from '../services/serviceService';
+import { donationService } from '../services/donationService';
+import { contactFormService } from '../services/contactFormService';
+import { volunteerService } from '../services/volunteerService';
+import { adminService } from '../services/adminService';
 import './AdminDashboard.css';
 import Settings from './pages/Settings';
+
 
 const AdminDashboard = ({ setIsAdminMode }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Check authentication
+  useEffect(() => {
+    if (!adminService.isLoggedIn()) {
+      navigate('/admin');
+      return;
+    }
+  }, [navigate]);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
   const [isPostFormOpen, setIsPostFormOpen] = useState(false);
@@ -21,9 +42,7 @@ const AdminDashboard = ({ setIsAdminMode }) => {
   const [userEmail, setUserEmail] = useState('admin@gmail.com');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [donations, setDonations] = useState(() => {
-    return JSON.parse(localStorage.getItem('donations') || '[]');
-  });
+  const [donations, setDonations] = useState([]);
   const [isEditPostFormOpen, setIsEditPostFormOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [selectedDonation, setSelectedDonation] = useState(null);
@@ -38,6 +57,15 @@ const AdminDashboard = ({ setIsAdminMode }) => {
   const [selectedContact, setSelectedContact] = useState(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState([]);
+  const [banners, setBanners] = useState([]);
+  const [isBannerFormOpen, setIsBannerFormOpen] = useState(false);
+  const [selectedBanner, setSelectedBanner] = useState(null);
+  const [isEditBanner, setIsEditBanner] = useState(false);
+  
+  const [services, setServices] = useState([]);
+  const [isServiceFormOpen, setIsServiceFormOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [isEditService, setIsEditService] = useState(false);
 
   useEffect(() => {
     setIsAdminMode(true);
@@ -51,7 +79,8 @@ const AdminDashboard = ({ setIsAdminMode }) => {
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (!isLoggedIn) {
+    const adminToken = localStorage.getItem('adminToken');
+    if (!isLoggedIn || !adminToken) {
       setIsLoginModalOpen(true);
     }
   }, []);
@@ -61,9 +90,30 @@ const AdminDashboard = ({ setIsAdminMode }) => {
     setEvents(savedEvents);
   }, []);
 
+  // Load volunteers from database
   useEffect(() => {
-    const savedVolunteers = JSON.parse(localStorage.getItem('volunteers') || '[]');
-    setVolunteers(savedVolunteers);
+    const loadVolunteers = async () => {
+      try {
+        const adminToken = localStorage.getItem('adminToken');
+        if (!adminToken) {
+          console.error('No admin token found. Please login first.');
+          return;
+        }
+        console.log('Loading volunteers with token:', adminToken);
+        const volunteersData = await volunteerService.getAllVolunteersAdmin();
+        console.log('Volunteers loaded:', volunteersData);
+        setVolunteers(volunteersData);
+      } catch (error) {
+        console.error('Error loading volunteers:', error);
+      }
+    };
+    
+    // Add small delay to ensure login is complete
+    const timer = setTimeout(() => {
+      loadVolunteers();
+    }, 500);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -71,8 +121,112 @@ const AdminDashboard = ({ setIsAdminMode }) => {
     setContacts(savedContacts);
   }, []);
 
+  // Load banners from API
+  useEffect(() => {
+    const loadBanners = async () => {
+      try {
+        const adminToken = localStorage.getItem('adminToken');
+        if (!adminToken) {
+          console.error('No admin token found. Please login first.');
+          return;
+        }
+        console.log('Loading banners with token:', adminToken);
+        const bannersData = await bannerService.getAllBannersAdmin();
+        console.log('Banners loaded:', bannersData);
+        setBanners(bannersData);
+      } catch (error) {
+        console.error('Error loading banners:', error);
+      }
+    };
+    
+    // Add small delay to ensure login is complete
+    const timer = setTimeout(() => {
+      loadBanners();
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Load services
+  useEffect(() => {
+    const loadServices = async () => {
+      try {
+        const adminToken = localStorage.getItem('adminToken');
+        if (!adminToken) {
+          console.error('No admin token found. Please login first.');
+          return;
+        }
+        console.log('Loading services with token:', adminToken);
+        const servicesData = await serviceService.getAllServicesAdmin();
+        console.log('Services loaded:', servicesData);
+        setServices(servicesData);
+      } catch (error) {
+        console.error('Error loading services:', error);
+      }
+    };
+    
+    // Add small delay to ensure login is complete
+    const timer = setTimeout(() => {
+      loadServices();
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Load donations from database
+  useEffect(() => {
+    const loadDonations = async () => {
+      try {
+        const adminToken = localStorage.getItem('adminToken');
+        if (!adminToken) {
+          console.error('No admin token found. Please login first.');
+          return;
+        }
+        console.log('Loading donations with token:', adminToken);
+        const donationsData = await donationService.getAllDonationsAdmin();
+        console.log('Donations loaded:', donationsData);
+        setDonations(donationsData);
+      } catch (error) {
+        console.error('Error loading donations:', error);
+      }
+    };
+    
+    // Add small delay to ensure login is complete
+    const timer = setTimeout(() => {
+      loadDonations();
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Load contact forms from database
+  useEffect(() => {
+    const loadContactForms = async () => {
+      try {
+        const adminToken = localStorage.getItem('adminToken');
+        if (!adminToken) {
+          console.error('No admin token found. Please login first.');
+          return;
+        }
+        console.log('Loading contact forms with token:', adminToken);
+        const contactFormsData = await contactFormService.getAllContactFormsAdmin();
+        console.log('Contact forms loaded:', contactFormsData);
+        setContacts(contactFormsData);
+      } catch (error) {
+        console.error('Error loading contact forms:', error);
+      }
+    };
+    
+    // Add small delay to ensure login is complete
+    const timer = setTimeout(() => {
+      loadContactForms();
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
+    adminService.logout();
     setIsAdminMode(false);
     document.body.classList.remove('admin-mode');
     navigate('/');
@@ -198,35 +352,53 @@ Thank you for your generous donation!
     });
   };
 
-  const handleApproveVolunteer = (volunteerId) => {
-    const updatedVolunteers = volunteers.map(volunteer => 
-      volunteer.id === volunteerId ? { ...volunteer, status: 'approved' } : volunteer
-    );
-    setVolunteers(updatedVolunteers);
-    localStorage.setItem('volunteers', JSON.stringify(updatedVolunteers));
-    setSelectedVolunteer(null);
+  const handleApproveVolunteer = async (volunteerId) => {
+    try {
+      await volunteerService.updateVolunteerStatus(volunteerId, 'approved');
+      const volunteersData = await volunteerService.getAllVolunteersAdmin();
+      setVolunteers(volunteersData);
+      setSelectedVolunteer(null);
+    } catch (error) {
+      console.error('Error approving volunteer:', error);
+      alert('Failed to approve volunteer. Please try again.');
+    }
   };
 
-  const handleDeleteVolunteer = (volunteerId) => {
-    const updatedVolunteers = volunteers.filter(volunteer => volunteer.id !== volunteerId);
-    setVolunteers(updatedVolunteers);
-    localStorage.setItem('volunteers', JSON.stringify(updatedVolunteers));
-    setSelectedVolunteer(null);
+  const handleDeleteVolunteer = async (volunteerId) => {
+    if (window.confirm('Are you sure you want to delete this volunteer?')) {
+      try {
+        await volunteerService.deleteVolunteer(volunteerId);
+        const volunteersData = await volunteerService.getAllVolunteersAdmin();
+        setVolunteers(volunteersData);
+        setSelectedVolunteer(null);
+      } catch (error) {
+        console.error('Error deleting volunteer:', error);
+        alert('Failed to delete volunteer. Please try again.');
+      }
+    }
   };
 
-  const handleMarkAsRead = (contactId) => {
-    const updatedContacts = contacts.map(contact => 
-      contact.id === contactId ? { ...contact, status: 'read' } : contact
-    );
-    setContacts(updatedContacts);
-    localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+  const handleMarkAsRead = async (contactId) => {
+    try {
+      await contactFormService.updateContactFormStatus(contactId, 'read');
+      const contactFormsData = await contactFormService.getAllContactFormsAdmin();
+      setContacts(contactFormsData);
+    } catch (error) {
+      console.error('Error marking contact as read:', error);
+      alert('Failed to update status. Please try again.');
+    }
   };
 
-  const handleDeleteContact = (contactId) => {
+  const handleDeleteContact = async (contactId) => {
     if (window.confirm('Are you sure you want to delete this message?')) {
-      const updatedContacts = contacts.filter(contact => contact.id !== contactId);
-      setContacts(updatedContacts);
-      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+      try {
+        await contactFormService.deleteContactForm(contactId);
+        const contactFormsData = await contactFormService.getAllContactFormsAdmin();
+        setContacts(contactFormsData);
+      } catch (error) {
+        console.error('Error deleting contact:', error);
+        alert('Failed to delete contact. Please try again.');
+      }
     }
   };
 
@@ -264,6 +436,130 @@ Thank you for your generous donation!
     setContacts(updatedContacts);
     localStorage.setItem('contacts', JSON.stringify(updatedContacts));
     setSelectedContacts([]);
+  };
+
+  // Banner Management Functions
+  const handleAddBanner = () => {
+    setSelectedBanner(null);
+    setIsEditBanner(false);
+    setIsBannerFormOpen(true);
+  };
+
+  const handleEditBanner = (banner) => {
+    setSelectedBanner(banner);
+    setIsEditBanner(true);
+    setIsBannerFormOpen(true);
+  };
+
+  const handleSaveBanner = async (bannerData) => {
+    try {
+      if (isEditBanner) {
+        // Update existing banner
+        await bannerService.updateBanner(selectedBanner.id, bannerData);
+        alert('Banner updated successfully!');
+      } else {
+        // Add new banner
+        await bannerService.createBanner(bannerData);
+        alert('Banner added successfully!');
+      }
+      
+      // Reload banners from server to get the complete data
+      const bannersData = await bannerService.getAllBannersAdmin();
+      setBanners(bannersData);
+      
+      setIsBannerFormOpen(false);
+      setSelectedBanner(null);
+      setIsEditBanner(false);
+    } catch (error) {
+      console.error('Error saving banner:', error);
+      throw error; // Re-throw to be caught by form
+    }
+  };
+
+  const handleDeleteBanner = async (bannerId) => {
+    try {
+      await bannerService.deleteBanner(bannerId);
+      // Reload banners from server
+      const bannersData = await bannerService.getAllBannersAdmin();
+      setBanners(bannersData);
+    } catch (error) {
+      console.error('Error deleting banner:', error);
+      alert('Failed to delete banner. Please try again.');
+    }
+  };
+
+  const handleToggleBannerActive = async (bannerId) => {
+    try {
+      await bannerService.toggleBannerActive(bannerId);
+      // Reload banners from server
+      const bannersData = await bannerService.getAllBannersAdmin();
+      setBanners(bannersData);
+    } catch (error) {
+      console.error('Error toggling banner status:', error);
+      alert('Failed to toggle banner status. Please try again.');
+    }
+  };
+
+  const handleViewBanner = (banner) => {
+    // Open banner preview in new tab or modal
+    window.open(`/banner-preview/${banner.id}`, '_blank');
+  };
+
+  // Services handlers
+  const handleAddService = () => {
+    setSelectedService(null);
+    setIsEditService(false);
+    setIsServiceFormOpen(true);
+  };
+
+  const handleEditService = (service) => {
+    setSelectedService(service);
+    setIsEditService(true);
+    setIsServiceFormOpen(true);
+  };
+
+  const handleSaveService = async (serviceData) => {
+    try {
+      if (isEditService) {
+        await serviceService.updateService(selectedService.id, serviceData);
+        alert('Service updated successfully!');
+      } else {
+        await serviceService.createService(serviceData);
+        alert('Service added successfully!');
+      }
+      
+      const servicesData = await serviceService.getAllServicesAdmin();
+      setServices(servicesData);
+      
+      setIsServiceFormOpen(false);
+      setSelectedService(null);
+      setIsEditService(false);
+    } catch (error) {
+      console.error('Error saving service:', error);
+      throw error; // Re-throw to be caught by form
+    }
+  };
+
+  const handleDeleteService = async (serviceId) => {
+    try {
+      await serviceService.deleteService(serviceId);
+      const servicesData = await serviceService.getAllServicesAdmin();
+      setServices(servicesData);
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      alert('Failed to delete service. Please try again.');
+    }
+  };
+
+  const handleToggleServiceActive = async (serviceId) => {
+    try {
+      await serviceService.toggleServiceActive(serviceId);
+      const servicesData = await serviceService.getAllServicesAdmin();
+      setServices(servicesData);
+    } catch (error) {
+      console.error('Error toggling service status:', error);
+      alert('Failed to toggle service status. Please try again.');
+    }
   };
 
   const renderContent = () => {
@@ -957,8 +1253,8 @@ Thank you for your generous donation!
                   <i className="fas fa-envelope"></i>
                 </div>
                 <div className="stat-details">
-                  <h3>Unread</h3>
-                  <h2>{contacts.filter(c => c.status === 'unread').length}</h2>
+                  <h3>New</h3>
+                  <h2>{contacts.filter(c => c.status === 'new').length}</h2>
                 </div>
               </div>
 
@@ -986,11 +1282,11 @@ Thank you for your generous donation!
                       <span>All</span>
                     </button>
                     <button 
-                      className={`filter-btn ${filterStatus === 'unread' ? 'active' : ''}`}
-                      onClick={() => setFilterStatus('unread')}
+                      className={`filter-btn ${filterStatus === 'new' ? 'active' : ''}`}
+                      onClick={() => setFilterStatus('new')}
                     >
                       <i className="fas fa-envelope"></i>
-                      <span>Unread</span>
+                      <span>New</span>
                     </button>
                     <button 
                       className={`filter-btn ${filterStatus === 'read' ? 'active' : ''}`}
@@ -1028,7 +1324,7 @@ Thank you for your generous donation!
                           </div>
                           <div>
                             <h4>{contact.name}</h4>
-                            <p>{new Date(contact.date).toLocaleDateString()}</p>
+                            <p>{new Date(contact.created_at).toLocaleDateString()}</p>
                           </div>
                         </div>
                         <span className={`status-badge ${contact.status}`}>
@@ -1106,8 +1402,8 @@ Thank you for your generous donation!
                   <i className="fas fa-envelope"></i>
                 </div>
                 <div className="stat-details">
-                  <h3>Unread</h3>
-                  <h2>{contacts.filter(c => c.status === 'unread').length}</h2>
+                  <h3>New</h3>
+                  <h2>{contacts.filter(c => c.status === 'new').length}</h2>
                 </div>
               </div>
 
@@ -1135,11 +1431,11 @@ Thank you for your generous donation!
                       <span>All</span>
                     </button>
                     <button 
-                      className={`filter-btn ${filterStatus === 'unread' ? 'active' : ''}`}
-                      onClick={() => setFilterStatus('unread')}
+                      className={`filter-btn ${filterStatus === 'new' ? 'active' : ''}`}
+                      onClick={() => setFilterStatus('new')}
                     >
                       <i className="fas fa-envelope"></i>
-                      <span>Unread</span>
+                      <span>New</span>
                     </button>
                     <button 
                       className={`filter-btn ${filterStatus === 'read' ? 'active' : ''}`}
@@ -1177,7 +1473,7 @@ Thank you for your generous donation!
                           </div>
                           <div>
                             <h4>{contact.name}</h4>
-                            <p>{new Date(contact.date).toLocaleDateString()}</p>
+                            <p>{new Date(contact.created_at).toLocaleDateString()}</p>
                           </div>
                         </div>
                         <span className={`status-badge ${contact.status}`}>
@@ -1227,6 +1523,67 @@ Thank you for your generous donation!
                   ))}
               </div>
             </section>
+          </div>
+        );
+      case 'admin':
+        return <AdminManagement />;
+      case 'banner':
+        console.log('Rendering banner tab with banners:', banners);
+        return (
+          <div className="banner-content">
+            <div className="content-header">
+              <div className="header-left">
+                <h1>Banner Management</h1>
+                <p>Manage your website banners</p>
+              </div>
+              <div className="header-actions">
+                <button className="add-new-btn" onClick={handleAddBanner}>
+                  <i className="fas fa-plus"></i> Add Banner
+                </button>
+              </div>
+            </div>
+            {banners.length > 0 ? (
+              <BannerDataTable 
+                banners={banners}
+                onEdit={handleEditBanner}
+                onDelete={handleDeleteBanner}
+                onToggleActive={handleToggleBannerActive}
+                onView={handleViewBanner}
+              />
+            ) : (
+              <div style={{ padding: '2rem', textAlign: 'center' }}>
+                <p>No banners found. Click "Add Banner" to create one.</p>
+              </div>
+            )}
+          </div>
+        );
+      case 'services':
+        console.log('Rendering services tab with services:', services);
+        return (
+          <div className="services-content">
+            <div className="content-header">
+              <div className="header-left">
+                <h1>Services Management</h1>
+                <p>Manage your website services</p>
+              </div>
+              <div className="header-actions">
+                <button className="add-new-btn" onClick={() => setIsServiceFormOpen(true)}>
+                  <i className="fas fa-plus"></i> Add Service
+                </button>
+              </div>
+            </div>
+            {services.length > 0 ? (
+              <ServiceDataTable 
+                services={services}
+                onEdit={handleEditService}
+                onDelete={handleDeleteService}
+                onToggleActive={handleToggleServiceActive}
+              />
+            ) : (
+              <div style={{ padding: '2rem', textAlign: 'center' }}>
+                <p>No services found. Click "Add Service" to create one.</p>
+              </div>
+            )}
           </div>
         );
       case 'settings':
@@ -1284,6 +1641,27 @@ Thank you for your generous donation!
               onClick={() => setActiveTab('contact-forms')}
             >
               <i className="fas fa-envelope"></i> Contact Forms
+            </a>
+            <a 
+              href="#" 
+              className={activeTab === 'admin' ? 'active' : ''}
+              onClick={() => setActiveTab('admin')}
+            >
+              <i className="fas fa-user-shield"></i> Admin
+            </a>
+            <a 
+              href="#" 
+              className={activeTab === 'banner' ? 'active' : ''}
+              onClick={() => setActiveTab('banner')}
+            >
+              <i className="fas fa-image"></i> Banner
+            </a>
+            <a 
+              href="#" 
+              className={activeTab === 'services' ? 'active' : ''}
+              onClick={() => setActiveTab('services')}
+            >
+              <i className="fas fa-cogs"></i> Services
             </a>
             <a 
               href="#" 
@@ -1352,6 +1730,39 @@ Thank you for your generous donation!
           setSelectedVolunteer(null);
         }}
         volunteer={selectedVolunteer}
+      />
+
+      <ContactDetailsModal 
+        isOpen={isContactModalOpen}
+        onClose={() => {
+          setIsContactModalOpen(false);
+          setSelectedContact(null);
+        }}
+        contact={selectedContact}
+      />
+
+      <BannerForm 
+        isOpen={isBannerFormOpen}
+        onClose={() => {
+          setIsBannerFormOpen(false);
+          setSelectedBanner(null);
+          setIsEditBanner(false);
+        }}
+        onSubmit={handleSaveBanner}
+        banner={selectedBanner}
+        isEdit={isEditBanner}
+      />
+
+      <ServiceForm 
+        isOpen={isServiceFormOpen}
+        onClose={() => {
+          setIsServiceFormOpen(false);
+          setSelectedService(null);
+          setIsEditService(false);
+        }}
+        onSubmit={handleSaveService}
+        service={selectedService}
+        isEdit={isEditService}
       />
     </>
   );

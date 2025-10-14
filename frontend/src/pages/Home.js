@@ -2,44 +2,74 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { bannerService } from '../services/bannerService';
+import { serviceService } from '../services/serviceService';
+import DonorPopup from '../components/DonorPopup';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './Home.css';
 
-const heroStyle = {
-  background: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${process.env.PUBLIC_URL + '/images/bg.jpg'})`,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
+const getHeroStyle = (activeBanner) => {
+  const defaultBg = `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${process.env.PUBLIC_URL + '/images/bg.jpg'})`;
+  const bannerBg = activeBanner?.image_url 
+    ? `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${activeBanner.image_url})`
+    : defaultBg;
+  
+  return {
+    background: bannerBg,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  };
 };
 
 const Home = () => {
-  const services = [
-    {
-      id: 1,
-      name: "Education Support",
-      image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-4.0.3",
-      description: "Providing quality education to underprivileged children"
-    },
-    {
-      id: 2,
-      name: "Healthcare",
-      image: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?ixlib=rb-4.0.3",
-      description: "Medical assistance to those in need"
-    },
-    {
-      id: 3,
-      name: "Food Security",
-      image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3",
-      description: "Fighting hunger in communities"
-    },
-    {
-      id: 4,
-      name: "Clean Water",
-      image: "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?ixlib=rb-4.0.3",
-      description: "Providing access to clean water"
+  const [banners, setBanners] = useState([]);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    // Get all active banners from API
+    const loadBanners = async () => {
+      try {
+        const bannersData = await bannerService.getAllBanners();
+        setBanners(bannersData);
+      } catch (error) {
+        console.error('Error loading banners:', error);
+        setBanners([]);
+      }
+    };
+    loadBanners();
+  }, []);
+
+  useEffect(() => {
+    // Get all active services from API
+    const loadServices = async () => {
+      try {
+        const servicesData = await serviceService.getAllServices();
+        setServices(servicesData);
+      } catch (error) {
+        console.error('Error loading services:', error);
+        setServices([]);
+      }
+    };
+    loadServices();
+  }, []);
+
+  // Auto-rotate banners every 5 seconds
+  useEffect(() => {
+    if (banners.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentBannerIndex((prevIndex) => 
+          (prevIndex + 1) % banners.length
+        );
+      }, 5000);
+      return () => clearInterval(interval);
     }
-  ];
+  }, [banners.length]);
+
+  const currentBanner = banners[currentBannerIndex];
+
 
   const progressRef = useRef(null);
   const progressLabelRef = useRef(null);
@@ -100,19 +130,35 @@ const Home = () => {
 
   return (
     <div className="home">
-      <div className="hero-banner" style={heroStyle}>
-        <div className="hero-content">
-          <span className="subtitle">Welcome to Sallar Foundation</span>
-          <h1 className="title">Together We Can Make<br />A Difference</h1>
-          <p className="description">
-            Join us in our mission to create positive change and help those in need. 
-            Your support can transform lives and build a better future for communities around the world.
-          </p>
+      <div className="hero-banner" style={getHeroStyle(currentBanner)}>
+        <div className="hero-content" style={{ textAlign: currentBanner?.text_alignment || 'center' }}>
+          {currentBanner?.sub_heading && <span className="subtitle">{currentBanner.sub_heading}</span>}
+          {currentBanner?.title && <h1 className="title">{currentBanner.title}</h1>}
+          {currentBanner?.description && <p className="description">{currentBanner.description}</p>}
           <div className="hero-buttons">
-            <Link to="/donate" className="primary-btn">Donate Now</Link>
-            <Link to="/volunteer" className="secondary-btn">Become A Volunteer</Link>
+            {currentBanner?.button_text && currentBanner?.link_url ? (
+              <Link to={currentBanner.link_url} className="primary-btn">{currentBanner.button_text}</Link>
+            ) : (
+              <>
+                <Link to="/donate" className="primary-btn">Donate Now</Link>
+                <Link to="/volunteer" className="secondary-btn">Become A Volunteer</Link>
+              </>
+            )}
           </div>
         </div>
+        
+        {/* Banner Navigation Dots */}
+        {banners.length > 1 && (
+          <div className="banner-dots">
+            {banners.map((_, index) => (
+              <button
+                key={index}
+                className={`banner-dot ${index === currentBannerIndex ? 'active' : ''}`}
+                onClick={() => setCurrentBannerIndex(index)}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <section className="about-donat">
@@ -178,62 +224,120 @@ const Home = () => {
             Humanist Services
           </h2>
 
-          <div className="services-grid">
-            <div className="service-card">
-              <div className="service-image">
-                <img src="/images/img10.jpg" alt="Healthy Foods" />
-                <div className="service-icon">
-                <div className="charity-icon green">
-                    <i className="fas fa-utensils"></i>
+          <div className="services-slider-container">
+            {services.length > 0 ? (
+              <Swiper
+                modules={[Navigation, Pagination, Autoplay]}
+                spaceBetween={30}
+                slidesPerView={3}
+                navigation={{
+                  nextEl: '.services-next',
+                  prevEl: '.services-prev',
+                }}
+                pagination={{
+                  clickable: true,
+                  el: '.services-pagination',
+                }}
+                autoplay={{
+                  delay: 5000,
+                  disableOnInteraction: false,
+                }}
+                breakpoints={{
+                  320: {
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                  },
+                  768: {
+                    slidesPerView: 2,
+                    spaceBetween: 25,
+                  },
+                  1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                  },
+                }}
+                className="services-swiper"
+              >
+                {services.map((service, index) => (
+                  <SwiperSlide key={service.id}>
+                    <div className="service-card">
+                      <div className="service-image">
+                        <img src={service.image_url} alt={service.title} />
+                        <div className="service-icon">
+                          <div className="charity-icon green">
+                            <i className={`fas ${service.icon_class || 'fa-cog'}`}></i>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="service-content">
+                        <h3>{service.title}</h3>
+                        <p>{service.description}</p>
+                      </div>
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            ) : (
+              // Fallback static content if no services loaded
+              <div className="services-grid">
+                <div className="service-card">
+                  <div className="service-image">
+                    <img src="/images/img10.jpg" alt="Healthy Foods" />
+                    <div className="service-icon">
+                    <div className="charity-icon green">
+                        <i className="fas fa-utensils"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="service-content">
+                    <h3>Medical Camp</h3>
+                    <p>Every month we organize a medical camp in rural areas in order to meet people and provide them free medication. </p>
                   </div>
                 </div>
-              </div>
-              <div className="service-content">
-                <h3>Medical Camp</h3>
-                <p>Every month we organize a medical camp in rural areas in order to meet people and provide them free medication. </p>
-                {/* <button className="learn-more-btn">
-                  <Link to="/health" style={{ color: 'white', textDecoration: 'none' }}>
-                    Learn More <i className="fas fa-arrow-right"></i>
-                  </Link>
-                </button> */}
-              </div>
-            </div>
 
-            <div className="service-card">
-              <div className="service-image">
-                <img src="/images/img6.jpg" alt="Education" />
-                <div className="service-icon">
-                <div className="charity-icon green">
-                    <i className="fas fa-graduation-cap"></i>
+                <div className="service-card">
+                  <div className="service-image">
+                    <img src="/images/img6.jpg" alt="Education" />
+                    <div className="service-icon">
+                    <div className="charity-icon green">
+                        <i className="fas fa-graduation-cap"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="service-content">
+                    <h3>Employment Opportunity</h3>
+                    <p>We provide the employment like Buying a Rickshaw for monthly income We buy an auto rickshaw and lease it to drivers or use it for a transport business.</p>
                   </div>
                 </div>
-              </div>
-              <div className="service-content">
-                <h3>Employment Opportunity</h3>
-                <p>We provide the employment like Buying a Rickshaw for monthly income We buy an auto rickshaw and lease it to drivers or use it for a transport business.</p>
-                {/* <button className="learn-more-btn">
-                  Learn More <i className="fas fa-arrow-right"></i>
-                </button> */}
-              </div>
-            </div>
 
-            <div className="service-card">
-              <div className="service-image">
-                <img src="/images/img7.jpg" alt="Medical Help" />
-                <div className="service-icon">
-                <div className="charity-icon green">
-                    <i className="fas fa-medkit"></i>
+                <div className="service-card">
+                  <div className="service-image">
+                    <img src="/images/img7.jpg" alt="Medical Help" />
+                    <div className="service-icon">
+                    <div className="charity-icon green">
+                        <i className="fas fa-medkit"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="service-content">
+                    <h3>Sewing Machines</h3>
+                    <p>Providing sewing machines to women who can work from home on stitching, tailoring, embroidery, or making garments.</p>
                   </div>
                 </div>
               </div>
-              <div className="service-content">
-                <h3>Sewing Machines</h3>
-                <p>Providing sewing machines to women who can work from home on stitching, tailoring, embroidery, or making garments.</p>
-                {/* <button className="learn-more-btn">
-                  Learn More <i className="fas fa-arrow-right"></i>
-                </button> */}
+            )}
+            
+            {services.length > 0 && (
+              <div className="services-slider-controls">
+                <button className="services-prev">
+                  <i className="fas fa-chevron-left"></i>
+                </button>
+                <button className="services-next">
+                  <i className="fas fa-chevron-right"></i>
+                </button>
+                <div className="services-pagination"></div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
@@ -504,6 +608,7 @@ const Home = () => {
         )}
       </section>
 
+      <DonorPopup />
     </div>
   );
 };

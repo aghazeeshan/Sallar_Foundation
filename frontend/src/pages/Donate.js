@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
+import DonorPopup from '../components/DonorPopup';
+import { donationService } from '../services/donationService';
 import './Donate.css';
 import DonationSuccessModal from '../components/DonationSuccessModal';
 
@@ -37,44 +39,55 @@ const Donate = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Save donation data
-    const donations = JSON.parse(localStorage.getItem('donations') || '[]');
-    const newDonation = {
-      id: Date.now(),
-      ...formData,
-      date: new Date().toISOString(),
-      status: 'completed'
-    };
-    
-    donations.push(newDonation);
-    localStorage.setItem('donations', JSON.stringify(donations));
-    
-    // Show success modal
-    setShowSuccessModal(true);
+    try {
+      // Prepare donation data for database
+      const donationData = {
+        donor_name: `${formData.firstName} ${formData.lastName}`,
+        donor_email: formData.email,
+        donor_phone: formData.phone,
+        donor_country: formData.address, // Using address as country for now
+        amount: parseFloat(formData.amount),
+        currency: 'USD',
+        payment_method: 'Credit Card',
+        donation_type: formData.campaign,
+        message: formData.message,
+        is_anonymous: formData.anonymous
+      };
 
-    // Reset form
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      address: '',
-      amount: '',
-      donationType: 'donation',
-      campaign: 'general',
-      anonymous: false,
-      message: '',
-      cardName: '',
-      cardNumber: '',
-      expiryDate: '',
-      cvv: '',
-    });
+      // Save to database
+      const result = await donationService.createDonation(donationData);
+      console.log('Donation saved to database:', result);
+      
+      // Show success modal
+      setShowSuccessModal(true);
+      
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        address: '',
+        amount: '',
+        donationType: 'donation',
+        campaign: 'general',
+        anonymous: false,
+        message: '',
+        cardName: '',
+        cardNumber: '',
+        expiryDate: '',
+        cvv: '',
+      });
 
-    // Reset step to 1
-    setStep(1);
+      // Reset step to 1
+      setStep(1);
+    } catch (error) {
+      console.error('Error saving donation:', error);
+      alert('Failed to process donation. Please try again.');
+    }
   };
 
   const predefinedAmounts = [10, 25, 50, 100, 250, 500];
@@ -357,6 +370,8 @@ const Donate = () => {
         onClose={() => setShowSuccessModal(false)}
         donationAmount={formData.amount}
       />
+      
+      <DonorPopup />
     </div>
   );
 };

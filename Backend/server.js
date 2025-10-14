@@ -1,49 +1,146 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const sendEmail = require('./mailer');
-const connectDB = require('./db'); // Import the database connection function
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
-const path = require('path');
+
+const { testConnection, createDatabase } = require('./config/database');
 
 const app = express();
-
-// Connect to database
-connectDB();
-
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// Model for form submissions
-const Submission = require('./models/Submission'); // Assuming you have this model
-
-// Route to handle form submissions
-app.post('/submit-form', async (req, res) => {
-    const { name, email, message } = req.body;
-
-    try {
-        const newSubmission = new Submission({ name, email, message });
-        await newSubmission.save();
-
-        await sendEmail('info@sallarfoundation.org', 'New Form Submission', `Name: ${name}\nEmail: ${email}\nMessage: ${message}`);
-        res.status(200).send('Form submitted and email sent successfully!');
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Server error');
-    }
-});
-
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../frontend/build')));
-
-// The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
-});
-
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+
+// Security middleware
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.'
 });
+app.use(limiter);
+
+// CORS configuration
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true
+}));
+
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Static files
+app.use('/uploads', express.static('uploads'));
+
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/blog', require('./routes/blogRoutes'));
+app.use('/api/banner', require('./routes/bannerRoutes'));
+app.use('/api/services', require('./routes/serviceRoutes'));
+app.use('/api/events', require('./routes/eventRoutes'));
+app.use('/api/donations', require('./routes/donationRoutes'));
+app.use('/api/volunteers', require('./routes/volunteerRoutes'));
+app.use('/api/contact', require('./routes/contactRoutes'));
+app.use('/api/contact-forms', require('./routes/contactFormRoutes'));
+app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/gallery', require('./routes/galleryRoutes'));
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'Charity Foundation API is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Charity Foundation API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      blog: '/api/blog',
+      banner: '/api/banner',
+      events: '/api/events',
+      donations: '/api/donations',
+      volunteers: '/api/volunteers',
+      contact: '/api/contact',
+      gallery: '/api/gallery'
+    }
+  });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'API endpoint not found'
+  });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal server error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
+// Initialize database and start server
+const startServer = async () => {
+  try {
+    // Create database if it doesn't exist
+    await createDatabase();
+    
+    // Test database connection
+    const isConnected = await testConnection();
+    
+    if (isConnected) {
+      app.listen(PORT, () => {
+        console.log(`🚀 Server running on port ${PORT}`);
+        console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`🌐 API URL: http://localhost:${PORT}`);
+        console.log(`📋 Health check: http://localhost:${PORT}/api/health`);
+      });
+    } else {
+      console.error('❌ Failed to connect to database. Server not started.');
+      process.exit(1);
+    }
+  } catch (error) {
+    console.error('❌ Server startup failed:', error.message);
+    process.exit(1);
+  }
+};
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err, promise) => {
+  console.error('Unhandled Promise Rejection:', err);
+  process.exit(1);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Shutting down gracefully...');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received. Shutting down gracefully...');
+  process.exit(0);
+});
+
+startServer();
+
+module.exports = app;
