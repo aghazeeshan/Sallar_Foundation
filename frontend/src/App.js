@@ -18,9 +18,21 @@ import Services from './pages/Services';
 import './App.css';
 import './styles/global.css';
 import Footer from './components/Footer';
+import LoginModal from './components/LoginModal';
+import BackToTop from './components/BackToTop';
+import DonationPopup from './components/DonationPopup';
 
 function App() {
   const [isAdminMode, setIsAdminMode] = useState(false);
+  const LoginPage = () => (
+    <LoginModal 
+      isOpen={true} 
+      onClose={() => {
+        // Navigate away from login if closed
+        window.location.href = '/';
+      }}
+    />
+  );
 
   // Helper function to adjust color brightness
   const adjustColor = (color, percent) => {
@@ -41,10 +53,10 @@ function App() {
   // Check if we're in admin route
   useEffect(() => {
     const path = window.location.pathname;
-    setIsAdminMode(path.includes('/admin'));
+    setIsAdminMode(path.includes('/admin') || path.startsWith('/development'));
 
     // Add/remove admin-mode class on body
-    if (path.includes('/admin')) {
+    if (path.includes('/admin') || path.startsWith('/development')) {
       document.body.classList.add('admin-mode');
     } else {
       document.body.classList.remove('admin-mode');
@@ -83,7 +95,7 @@ function App() {
   return (
     <Router>
       <div className={`App ${isAdminMode ? 'admin-mode' : ''}`}>
-        <Navbar />
+        {!isAdminMode && <Navbar />}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -96,11 +108,14 @@ function App() {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/blog/:id" element={<BlogDetails />} />
           <Route path="/admin/dashboard" element={<AdminDashboard setIsAdminMode={setIsAdminMode} />} />
+          <Route path="/development" element={<LoginPage />} />
           <Route path="/category/:categoryId" element={<CategoryPage />} />
           <Route path="/admin/blog-posts" element={<BlogPosts />} />
           <Route path="/health" element={<Health />} />
         </Routes>
-        <Footer />
+        {!isAdminMode && <Footer />}
+        {!isAdminMode && <BackToTop />}
+        {!isAdminMode && <DonationPopup />}
       </div>
     </Router>
   );

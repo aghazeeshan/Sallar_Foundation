@@ -2,8 +2,42 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { promisePool } = require('../config/database');
 const { authenticateToken, requireModerator } = require('../middleware/auth');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs').promises;
 
 const router = express.Router();
+
+// Multer configuration for gallery image uploads
+const storage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    const uploadDir = 'uploads/gallery';
+    try {
+      await fs.mkdir(uploadDir, { recursive: true });
+      cb(null, uploadDir);
+    } catch (error) {
+      cb(error);
+    }
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1E9);
+    cb(null, 'gallery_' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (extname && mimetype) {
+      return cb(null, true);
+    }
+    cb(new Error('Only image files are allowed!'));
+  },
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
 
 // Get all gallery images
 router.get('/', async (req, res) => {
@@ -94,44 +128,54 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create gallery image (admin only)
+// Create gallery image (admin only) - with file upload
 router.post('/', [
   authenticateToken,
   requireModerator,
+  upload.single('image'),
   body('title').optional(),
   body('description').optional(),
-  body('image_url').notEmpty().withMessage('Image URL is required'),
   body('category').optional(),
-  body('is_featured').optional().isBoolean().withMessage('is_featured must be boolean'),
-  body('display_order').optional().isInt().withMessage('display_order must be integer')
+  body('is_featured').optional(),
+  body('display_order').optional()
 ], async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    // Check if file was uploaded or image_url provided
+    if (!req.file && !req.body.image_url) {
       return res.status(400).json({
         success: false,
-        message: 'Validation failed',
-        errors: errors.array()
+        message: 'Image file or image URL is required'
       });
     }
 
-    const { title, description, image_url, category, is_featured = false, display_order = 0 } = req.body;
+    const image_url = req.file ? `/uploads/gallery/${req.file.filename}` : req.body.image_url;
+    const { title, description, category, is_featured = 0, display_order = 0 } = req.body;
 
     const [result] = await promisePool.execute(`
       INSERT INTO gallery_images (title, description, image_url, category, is_featured, display_order)
       VALUES (?, ?, ?, ?, ?, ?)
-    `, [title, description, image_url, category, is_featured, display_order]);
+    `, [
+      title || '', 
+      description || '', 
+      image_url, 
+      category || 'general', 
+      is_featured === 'true' || is_featured === true || is_featured === 1 ? 1 : 0, 
+      parseInt(display_order) || 0
+    ]);
 
     res.status(201).json({
       success: true,
       message: 'Gallery image created successfully',
-      data: { id: result.insertId }
+      data: { 
+        id: result.insertId,
+        image_url: image_url
+      }
     });
   } catch (error) {
     console.error('Create gallery image error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to create gallery image'
+      message: 'Failed to create gallery image: ' + error.message
     });
   }
 });

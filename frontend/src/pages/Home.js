@@ -13,13 +13,18 @@ import './Home.css';
 const getHeroStyle = (activeBanner) => {
   const defaultBg = `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${process.env.PUBLIC_URL + '/images/bg.jpg'})`;
   const bannerBg = activeBanner?.image_url 
-    ? `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${activeBanner.image_url})`
+    ? `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(http://localhost:5000${activeBanner.image_url})`
     : defaultBg;
   
+  console.log('Banner data:', activeBanner);
+  console.log('Banner image URL:', activeBanner?.image_url);
+  console.log('Full background:', bannerBg);
+  
   return {
-    background: bannerBg,
+    backgroundImage: bannerBg,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
   };
 };
 
@@ -27,6 +32,7 @@ const Home = () => {
   const [banners, setBanners] = useState([]);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [services, setServices] = useState([]);
+  const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
     // Get all active banners from API
@@ -55,6 +61,44 @@ const Home = () => {
     };
     loadServices();
   }, []);
+
+  useEffect(() => {
+    // Get gallery images from API (limit to 12 for home page)
+    const loadGalleryImages = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/gallery?limit=12');
+        const data = await response.json();
+        if (data.success && data.data) {
+          setGalleryImages(data.data);
+        } else {
+          // Fallback to default images
+          setGalleryImages(getDefaultGalleryImages());
+        }
+      } catch (error) {
+        console.error('Error loading gallery images:', error);
+        // Fallback to default images
+        setGalleryImages(getDefaultGalleryImages());
+      }
+    };
+    loadGalleryImages();
+  }, []);
+
+  const getDefaultGalleryImages = () => {
+    return [
+      { id: 1, image_url: '/images/img1.jpg', title: 'Gallery 1' },
+      { id: 2, image_url: '/images/img2.jpg', title: 'Gallery 2' },
+      { id: 3, image_url: '/images/img3.jpg', title: 'Gallery 3' },
+      { id: 4, image_url: '/images/img4.jpg', title: 'Gallery 4' },
+      { id: 5, image_url: '/images/img5.jpg', title: 'Gallery 5' },
+      { id: 6, image_url: '/images/img6.jpg', title: 'Gallery 6' },
+      { id: 7, image_url: '/images/img7.jpg', title: 'Gallery 7' },
+      { id: 8, image_url: '/images/img8.jpg', title: 'Gallery 8' },
+      { id: 9, image_url: '/images/img9.jpg', title: 'Gallery 9' },
+      { id: 10, image_url: '/images/img10.jpg', title: 'Gallery 10' },
+      { id: 11, image_url: '/images/img11.jpg', title: 'Gallery 11' },
+      { id: 12, image_url: '/images/img12.jpg', title: 'Gallery 12' },
+    ];
+  };
 
   // Auto-rotate banners every 5 seconds
   useEffect(() => {
@@ -113,20 +157,6 @@ const Home = () => {
     setSelectedImage(galleryImages[currentImageIndex === galleryImages.length - 1 ? 0 : currentImageIndex + 1]);
   };
 
-  const galleryImages = [
-    '/images/img1.jpg',
-    '/images/img2.jpg',
-    '/images/img3.jpg',
-    '/images/img4.jpg',
-    '/images/img5.jpg',
-    '/images/img6.jpg',
-    '/images/img7.jpg',
-    '/images/img8.jpg',
-    '/images/img9.jpg',
-    '/images/img10.jpg',
-    '/images/img11.jpg',
-    '/images/img12.jpg',
-  ];
 
   return (
     <div className="home">
@@ -206,7 +236,7 @@ const Home = () => {
             </div>
             <div className="about-donat-image">
               <div className="image-frame">
-                <img src="/images/img3.jpg" alt="Happy child" />
+                <img src="/images/img1.png" alt="Happy child" />
               </div>
               <div className="brush-stroke"></div>
             </div>
@@ -218,11 +248,25 @@ const Home = () => {
 
       <section className="services-section">
         <div className="container">
-          <span className="section-tag">Our Services</span>
-          <h2 className="section-title">
-            We Do It For All People<br />
-            Humanist Services
-          </h2>
+          <div className="services-header-wrapper">
+            <div className="services-header-content">
+              <span className="section-tag">Our Services</span>
+              <h2 className="section-title">
+                We Do It For All People<br />
+                Humanist Services
+              </h2>
+            </div>
+            {services.length > 0 && (
+              <div className="services-nav-arrows">
+                <button className="services-prev">
+                  <i className="fas fa-arrow-left"></i>
+                </button>
+                <button className="services-next">
+                  <i className="fas fa-arrow-right"></i>
+                </button>
+              </div>
+            )}
+          </div>
 
           <div className="services-slider-container">
             {services.length > 0 ? (
@@ -328,15 +372,7 @@ const Home = () => {
             )}
             
             {services.length > 0 && (
-              <div className="services-slider-controls">
-                <button className="services-prev">
-                  <i className="fas fa-chevron-left"></i>
-                </button>
-                <button className="services-next">
-                  <i className="fas fa-chevron-right"></i>
-                </button>
-                <div className="services-pagination"></div>
-              </div>
+              <div className="services-pagination"></div>
             )}
           </div>
         </div>
@@ -361,7 +397,7 @@ const Home = () => {
               <div className="donation-card">
                 <div className="donation-card-content">
                   <div className="donation-image">
-                    <img src="/images/img9.jpg" alt="Children" />
+                    <img src="/images/sallar_img1.jpg" alt="Children" />
                   </div>
                   <div className="donation-info">
                     <h3>Big charity: build school for poor children</h3>
@@ -403,7 +439,7 @@ const Home = () => {
               </div>
             </div>
             <div className="donation-cta-image">
-              <img src="/images/img12.jpg" alt="Donation Impact" />
+              <img src="/images/sallar_img2.jpg" alt="Donation Impact" />
               <div className="play-button">
                 <i className="fas fa-play"></i>
               </div>
@@ -476,7 +512,7 @@ const Home = () => {
               
             </div>
             <div className="why-choose-image">
-              <img src="/images/img6.jpg" alt="Children smiling" />
+              <img src="/images/sallar_img3.jpg" alt="Children smiling" />
               <div className="image-overlay"></div>
             </div>
           </div>
@@ -562,7 +598,7 @@ const Home = () => {
 
       <section className="gallery-section">
         <div className="container">
-          <div className="gallery-header">
+          <div className="section-header">
             <span className="section-tag">Our Gallery</span>
             <h2 className="section-title">
               Making A Difference In<br />People's Lives
@@ -572,14 +608,17 @@ const Home = () => {
           <div className="gallery-grid">
             {galleryImages.map((image, index) => (
               <div 
-                key={index} 
+                key={image.id || index} 
                 className="gallery-item"
                 onClick={() => {
                   setSelectedImage(image);
                   setCurrentImageIndex(index);
                 }}
               >
-                <img src={image} alt={`Gallery ${index + 1}`} />
+                <img 
+                  src={image.image_url.startsWith('http') ? image.image_url : `http://localhost:5000${image.image_url}`} 
+                  alt={image.title || `Gallery ${index + 1}`} 
+                />
                 <div className="gallery-hover">
                   <i className="fas fa-eye"></i>
                 </div>
@@ -599,7 +638,10 @@ const Home = () => {
             <button className="nav-btn prev" onClick={handlePrevImage}>
               <i className="fas fa-chevron-left"></i>
             </button>
-            <img src={selectedImage} alt="Preview" />
+            <img 
+              src={typeof selectedImage === 'string' ? selectedImage : (selectedImage.image_url?.startsWith('http') ? selectedImage.image_url : `http://localhost:5000${selectedImage.image_url}`)} 
+              alt={selectedImage.title || "Preview"} 
+            />
             <button className="nav-btn next" onClick={handleNextImage}>
               <i className="fas fa-chevron-right"></i>
             </button>

@@ -62,7 +62,7 @@
     left: -30px;
     right: 30px;
     bottom: 30px;
-    background: var(--primary-color);
+    background: #fff;
     border-radius: 20px;
     z-index: 1;
     opacity: 0.1;

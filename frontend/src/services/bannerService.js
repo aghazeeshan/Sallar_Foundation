@@ -72,13 +72,16 @@ export const bannerService = {
       if (!token) {
         throw new Error('No admin token found');
       }
+      const isFormData = typeof FormData !== 'undefined' && bannerData instanceof FormData;
+      const headers = isFormData ? { 'Authorization': `Bearer ${token}` } : {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+      const body = isFormData ? bannerData : JSON.stringify(bannerData);
       const response = await fetch(`${API_BASE_URL}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(bannerData),
+        headers,
+        body,
       });
       if (!response.ok) {
         const errorData = await response.json();
@@ -95,13 +98,16 @@ export const bannerService = {
   updateBanner: async (id, bannerData) => {
     try {
       const token = localStorage.getItem('adminToken');
+      const isFormData = typeof FormData !== 'undefined' && bannerData instanceof FormData;
+      const headers = isFormData ? { 'Authorization': `Bearer ${token}` } : {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+      const body = isFormData ? bannerData : JSON.stringify(bannerData);
       const response = await fetch(`${API_BASE_URL}/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(bannerData),
+        headers,
+        body,
       });
       if (!response.ok) throw new Error('Failed to update banner');
       return await response.json();

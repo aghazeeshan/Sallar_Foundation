@@ -107,7 +107,7 @@ const Contact = () => {
         <div className="container">
           <div className="contact-form-grid">
             <div className="contact-form-image">
-              <img src="/images/contact_1_1.png" alt="Contact Us" />
+              <img src="/images/sallar_img4.png" alt="Contact Us" />
               <div className="brush-stroke"></div>
             </div>
             

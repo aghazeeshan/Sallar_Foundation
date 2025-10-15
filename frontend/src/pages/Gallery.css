@@ -27,4 +27,38 @@
   .gallery-page .gallery-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Image Info in Modal */
+.image-info {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 80%;
+  pointer-events: none;
+}
+
+.image-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.image-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  color: white;
+}
+
+.gallery-hover p {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.9rem;
+  font-weight: 500;
 } 

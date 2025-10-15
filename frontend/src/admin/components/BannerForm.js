@@ -17,6 +17,7 @@ const BannerForm = ({ isOpen, onClose, onSubmit, banner = null, isEdit = false }
 
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState('');
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     if (isEdit && banner) {
@@ -33,6 +34,7 @@ const BannerForm = ({ isOpen, onClose, onSubmit, banner = null, isEdit = false }
         created_at: banner.created_at || new Date().toISOString()
       });
       setImagePreview(banner.image_url || '');
+      setImageFile(null);
     } else {
       // Reset form for new banner
       setFormData({
@@ -48,6 +50,7 @@ const BannerForm = ({ isOpen, onClose, onSubmit, banner = null, isEdit = false }
         created_at: new Date().toISOString()
       });
       setImagePreview('');
+      setImageFile(null);
     }
   }, [isEdit, banner, isOpen]);
 
@@ -65,18 +68,27 @@ const BannerForm = ({ isOpen, onClose, onSubmit, banner = null, isEdit = false }
         [name]: ''
       }));
     }
+  };
 
-    // Update image preview
-    if (name === 'image_url') {
-      setImagePreview(value);
+  const handleFileChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    setImageFile(file || null);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImagePreview(url);
+    } else {
+      setImagePreview(isEdit && banner ? (banner.image_url || '') : '');
+    }
+    if (errors['image']) {
+      setErrors(prev => ({ ...prev, image: '' }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.image_url.trim()) {
-      newErrors.image_url = 'Background image is required';
+    if (!isEdit && !imageFile) {
+      newErrors.image = 'Background image is required';
     }
 
     if (!formData.title.trim()) {
@@ -89,11 +101,6 @@ const BannerForm = ({ isOpen, onClose, onSubmit, banner = null, isEdit = false }
 
     if (formData.button_text && !formData.link_url.trim()) {
       newErrors.link_url = 'Button link is required when button text is provided';
-    }
-
-    // Validate URL format
-    if (formData.image_url && !isValidUrl(formData.image_url)) {
-      newErrors.image_url = 'Please enter a valid image URL';
     }
 
     if (formData.link_url && !isValidUrl(formData.link_url)) {
@@ -122,19 +129,17 @@ const BannerForm = ({ isOpen, onClose, onSubmit, banner = null, isEdit = false }
     }
 
     try {
-      // Generate ID for new banners
-      const bannerData = {
-        title: formData.title,
-        sub_heading: formData.sub_heading || null,
-        description: formData.description,
-        image_url: formData.image_url,
-        button_text: formData.button_text || null,
-        button_link: formData.link_url || null,
-        text_alignment: formData.text_alignment,
-        is_active: formData.is_active
-      };
+      const payload = new FormData();
+      payload.append('title', formData.title);
+      if (formData.sub_heading) payload.append('sub_heading', formData.sub_heading);
+      if (formData.description) payload.append('description', formData.description);
+      if (formData.button_text) payload.append('button_text', formData.button_text);
+      if (formData.link_url) payload.append('button_link', formData.link_url);
+      payload.append('text_alignment', formData.text_alignment);
+      payload.append('is_active', String(formData.is_active));
+      if (imageFile) payload.append('image', imageFile);
 
-      await onSubmit(bannerData);
+      await onSubmit(payload);
       onClose();
     } catch (error) {
       console.error('Form submit error:', error);
@@ -143,7 +148,7 @@ const BannerForm = ({ isOpen, onClose, onSubmit, banner = null, isEdit = false }
   };
 
   const handleClose = () => {
-    if (formData.image_url || formData.title || formData.description) {
+    if (imageFile || formData.title || formData.description) {
       if (window.confirm('You have unsaved changes. Are you sure you want to close?')) {
         onClose();
       }
@@ -167,17 +172,16 @@ const BannerForm = ({ isOpen, onClose, onSubmit, banner = null, isEdit = false }
         <form onSubmit={handleSubmit} className="banner-form">
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="image_url">Background Image URL *</label>
+              <label htmlFor="image">Background Image {isEdit ? '(optional)' : '*'} </label>
               <input
-                type="url"
-                id="image_url"
-                name="image_url"
-                value={formData.image_url}
-                onChange={handleInputChange}
-                placeholder="https://example.com/image.jpg"
-                className={errors.image_url ? 'error' : ''}
+                type="file"
+                id="image"
+                name="image"
+                accept="image/*"
+                onChange={handleFileChange}
+                className={errors.image ? 'error' : ''}
               />
-              {errors.image_url && <span className="error-text">{errors.image_url}</span>}
+              {errors.image && <span className="error-text">{errors.image}</span>}
             </div>
 
             <div className="form-group">
@@ -261,19 +265,6 @@ const BannerForm = ({ isOpen, onClose, onSubmit, banner = null, isEdit = false }
               />
               {errors.link_url && <span className="error-text">{errors.link_url}</span>}
             </div>
-          </div>
-
-          <div className="form-group checkbox-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="is_active"
-                checked={formData.is_active}
-                onChange={handleInputChange}
-              />
-              <span className="checkmark"></span>
-              Active Banner
-            </label>
           </div>
 
           {/* Preview Section */}

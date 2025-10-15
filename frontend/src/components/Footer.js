@@ -20,7 +20,7 @@ const Footer = () => {
             {/* Logo & Description */}
             <div className="footer-about">
               <Link to="/" className="footer-logo">
-                <span className="logo-text">Sallar Foundation</span>
+                <img src={`${process.env.PUBLIC_URL}/images/sticky_logo.png`} alt="Sallar Foundation" className="footer-logo-img" />
               </Link>
               <p className="footer-description">
                 Our secure online donation platform allows you to make contributions quickly

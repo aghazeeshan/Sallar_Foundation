@@ -12,6 +12,7 @@ import BannerForm from './components/BannerForm';
 import BannerDataTable from './components/BannerDataTable';
 import ServiceForm from './components/ServiceForm';
 import ServiceDataTable from './components/ServiceDataTable';
+import GalleryManagement from './components/GalleryManagement';
 import { generateVolunteerPDF } from '../utils/generateVolunteerPDF';
 import VolunteerDetailsModal from '../components/VolunteerDetailsModal';
 import { bannerService } from '../services/bannerService';
@@ -31,7 +32,7 @@ const AdminDashboard = ({ setIsAdminMode }) => {
   // Check authentication
   useEffect(() => {
     if (!adminService.isLoggedIn()) {
-      navigate('/admin');
+      navigate('/development');
       return;
     }
   }, [navigate]);
@@ -1586,6 +1587,8 @@ Thank you for your generous donation!
             )}
           </div>
         );
+      case 'gallery':
+        return <GalleryManagement />;
       case 'settings':
         return <Settings />;
     }
@@ -1662,6 +1665,13 @@ Thank you for your generous donation!
               onClick={() => setActiveTab('services')}
             >
               <i className="fas fa-cogs"></i> Services
+            </a>
+            <a 
+              href="#" 
+              className={activeTab === 'gallery' ? 'active' : ''}
+              onClick={() => setActiveTab('gallery')}
+            >
+              <i className="fas fa-images"></i> Gallery
             </a>
             <a 
               href="#" 

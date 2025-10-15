@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
 import { serviceService } from '../services/serviceService';
+import './Services.css';
 
 const Services = () => {
   const [services, setServices] = useState([]);
@@ -28,8 +29,16 @@ const Services = () => {
 
       <section className="services-section">
         <div className="container">
-          {loading && <p>Loading services...</p>}
-          {error && !loading && <p style={{ color: 'red' }}>{error}</p>}
+          <div className="services-header">
+            <span className="section-tag">Our Services</span>
+            <h2 className="section-title">
+              We Do It For All People<br />
+              Humanist Services
+            </h2>
+          </div>
+
+          {loading && <p className="loading-text">Loading services...</p>}
+          {error && !loading && <p className="error-text">{error}</p>}
 
           {!loading && !error && (
             <div className="services-grid">
@@ -38,15 +47,18 @@ const Services = () => {
               ) : (
                 services.map(service => (
                   <div key={service.id} className="service-card">
-                    <h3>{service.title || 'Untitled Service'}</h3>
-                    {service.image_url && (
-                      <img
-                        src={service.image_url}
-                        alt={service.title || 'Service'}
-                        style={{ width: '100%', height: 'auto', borderRadius: 8 }}
-                      />
-                    )}
-                    {service.description && <p>{service.description}</p>}
+                    <div className="service-image">
+                      <img src={service.image_url} alt={service.title || 'Service'} />
+                      <div className="service-icon">
+                        <div className="charity-icon green">
+                          <i className={`fas ${service.icon_class || 'fa-hands-helping'}`}></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="service-content">
+                      <h3>{service.title || 'Untitled Service'}</h3>
+                      <p>{service.description}</p>
+                    </div>
                   </div>
                 ))
               )}

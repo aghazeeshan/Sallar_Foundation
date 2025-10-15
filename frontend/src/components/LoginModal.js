@@ -35,7 +35,14 @@ const LoginModal = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <div className="login-modal-overlay">
+      <div 
+        className="login-modal-overlay"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url(${process.env.PUBLIC_URL}/images/sallar_img6.webp)`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
         <div className="login-modal">
           <div className="modal-content">
             <div className="modal-left">

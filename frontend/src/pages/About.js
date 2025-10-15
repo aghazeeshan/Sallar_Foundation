@@ -37,7 +37,7 @@ const About = () => {
           
           <div className="mission-vision-grid">
             <div className="mission-vision-image">
-              <img src="/images/img3.jpg" alt="Foundation Work" />
+              <img src="/images/img1.png" alt="Foundation Work" />
               <div className="brush-stroke"></div>
             </div>
 
@@ -57,14 +57,13 @@ Our work spans across interior, collaborating with local communities, non-profit
                 <h3 className="plan-title">Our Vision</h3>
                 <p className="plan-subtitle">
                 "We want to create a society where every individual, regardless of their circumstances, has the opportunity to live a life free from poverty, with access to basic needs, dignity, and the chance to thrive to create a society where no one lives in hunger or despair, and all people have the resources, support, and opportunities they need to build a brighter future."
-These vision statements emphasize:
-<ul>
-<li>Empowerment: Providing individuals with the tools and opportunities they need to improve their lives.</li>
-<li>Dignity: Ensuring that the poor and needy are treated with respect and given the chance to thrive, not just survive.</li>
-<li>Hope and Change: Inspiring hope by working toward long-term solutions to poverty.</li>
-</ul>
-
                 </p>
+                <p className="plan-subtitle">These vision statements emphasize:</p>
+                <ul className="vision-list">
+                  <li>Empowerment: Providing individuals with the tools and opportunities they need to improve their lives.</li>
+                  <li>Dignity: Ensuring that the poor and needy are treated with respect and given the chance to thrive, not just survive.</li>
+                  <li>Hope and Change: Inspiring hope by working toward long-term solutions to poverty.</li>
+                </ul>
                
               </div>
             </div>

@@ -87,7 +87,7 @@
 }
 
 .donate-button {
-  background: #ff6b35;
+  background: var(--secondary-color);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -100,7 +100,7 @@
 }
 
 .donate-button:hover {
-  background: #e55a2b;
+  background: var(--secondary-dark);
 }
 
 @keyframes slideInLeft {
