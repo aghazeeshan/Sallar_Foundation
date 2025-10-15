@@ -1,0 +1,82 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          frontend/package-lock.json
+          Backend/package-lock.json
+
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Install backend dependencies
+      run: |
+        cd Backend
+        npm ci --only=production
+
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        port: ${{ secrets.VPS_PORT }}
+        script: |
+          # Navigate to project directory
+          cd /var/www/sallar-foundation
+          
+          # Pull latest changes
+          git pull origin main
+          
+          # Stop existing containers
+          docker-compose down
+          
+          # Remove old images to free space
+          docker image prune -f
+          
+          # Build and start new containers
+          docker-compose up -d --build
+          
+          # Wait for services to be healthy
+          sleep 30
+          
+          # Check if services are running
+          docker-compose ps
+          
+          # Show logs if there are any issues
+          if [ $? -ne 0 ]; then
+            docker-compose logs --tail=50
+          fi
+
+    - name: Notify deployment status
+      if: always()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: 'Deployment to VPS: ${{ job.status }}'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # Optional

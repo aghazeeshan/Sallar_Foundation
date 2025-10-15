@@ -45,22 +45,29 @@ const Services = () => {
               {services.length === 0 ? (
                 <p>No services available right now.</p>
               ) : (
-                services.map(service => (
-                  <div key={service.id} className="service-card">
-                    <div className="service-image">
-                      <img src={service.image_url} alt={service.title || 'Service'} />
-                      <div className="service-icon">
-                        <div className="charity-icon green">
-                          <i className={`fas ${service.icon_class || 'fa-hands-helping'}`}></i>
+                services.map(service => {
+                  // Construct proper image URL
+                  const imageUrl = service.image_url?.startsWith('/uploads/') 
+                    ? `http://localhost:5000${service.image_url}` 
+                    : service.image_url;
+                  
+                  return (
+                    <div key={service.id} className="service-card">
+                      <div className="service-image">
+                        <img src={imageUrl} alt={service.title || 'Service'} />
+                        <div className="service-icon">
+                          <div className="charity-icon green">
+                            <i className={`fas ${service.icon_class || 'fa-hands-helping'}`}></i>
+                          </div>
                         </div>
                       </div>
+                      <div className="service-content">
+                        <h3>{service.title || 'Untitled Service'}</h3>
+                        <p>{service.description}</p>
+                      </div>
                     </div>
-                    <div className="service-content">
-                      <h3>{service.title || 'Untitled Service'}</h3>
-                      <p>{service.description}</p>
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           )}

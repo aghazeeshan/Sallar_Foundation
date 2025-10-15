@@ -57,13 +57,16 @@ export const serviceService = {
       if (!token) {
         throw new Error('No admin token found');
       }
+
+      const headers = { 'Authorization': `Bearer ${token}` };
+      if (!(serviceData instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+      }
+
       const response = await fetch(`${API_BASE_URL}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(serviceData),
+        headers: headers,
+        body: serviceData instanceof FormData ? serviceData : JSON.stringify(serviceData),
       });
       if (!response.ok) {
         const errorData = await response.json();
@@ -80,13 +83,16 @@ export const serviceService = {
   updateService: async (id, serviceData) => {
     try {
       const token = localStorage.getItem('adminToken');
+      
+      const headers = { 'Authorization': `Bearer ${token}` };
+      if (!(serviceData instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+      }
+
       const response = await fetch(`${API_BASE_URL}/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(serviceData),
+        headers: headers,
+        body: serviceData instanceof FormData ? serviceData : JSON.stringify(serviceData),
       });
       if (!response.ok) {
         const errorData = await response.json();

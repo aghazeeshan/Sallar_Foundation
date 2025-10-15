@@ -13,6 +13,7 @@ const ServiceForm = ({ isOpen, onClose, onSubmit, service = null, isEdit = false
 
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     if (isEdit && service) {
@@ -24,7 +25,8 @@ const ServiceForm = ({ isOpen, onClose, onSubmit, service = null, isEdit = false
         display_order: service.display_order || 0,
         is_active: service.is_active !== undefined ? service.is_active : true
       });
-      setImagePreview(service.image_url || '');
+      setImagePreview(service.image_url ? `http://localhost:5000${service.image_url}` : '');
+      setSelectedFile(null);
     } else {
       setFormData({
         title: '',
@@ -35,6 +37,7 @@ const ServiceForm = ({ isOpen, onClose, onSubmit, service = null, isEdit = false
         is_active: true
       });
       setImagePreview('');
+      setSelectedFile(null);
     }
   }, [isEdit, service, isOpen]);
 
@@ -57,6 +60,18 @@ const ServiceForm = ({ isOpen, onClose, onSubmit, service = null, isEdit = false
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+    
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+      setErrors(prev => ({ ...prev, image_url: '' }));
+    } else {
+      setImagePreview(isEdit && service ? `http://localhost:5000${service.image_url}` : '');
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -68,8 +83,8 @@ const ServiceForm = ({ isOpen, onClose, onSubmit, service = null, isEdit = false
       newErrors.description = 'Description is required';
     }
 
-    if (!formData.image_url.trim()) {
-      newErrors.image_url = 'Image URL is required';
+    if (!selectedFile && !formData.image_url.trim()) {
+      newErrors.image_url = 'Image is required';
     }
 
     setErrors(newErrors);
@@ -85,14 +100,18 @@ const ServiceForm = ({ isOpen, onClose, onSubmit, service = null, isEdit = false
     }
 
     try {
-      const serviceData = {
-        title: formData.title,
-        description: formData.description,
-        image_url: formData.image_url,
-        icon_class: formData.icon_class || null,
-        display_order: parseInt(formData.display_order) || 0,
-        is_active: formData.is_active
-      };
+      const serviceData = new FormData();
+      serviceData.append('title', formData.title);
+      serviceData.append('description', formData.description);
+      serviceData.append('icon_class', formData.icon_class || '');
+      serviceData.append('display_order', parseInt(formData.display_order) || 0);
+      serviceData.append('is_active', formData.is_active);
+
+      if (selectedFile) {
+        serviceData.append('image', selectedFile);
+      } else if (formData.image_url) {
+        serviceData.append('image_url', formData.image_url);
+      }
 
       await onSubmit(serviceData);
       onClose();
@@ -154,17 +173,22 @@ const ServiceForm = ({ isOpen, onClose, onSubmit, service = null, isEdit = false
           </div>
 
           <div className="form-group">
-            <label htmlFor="image_url">Image URL *</label>
+            <label htmlFor="image_upload">Service Image *</label>
             <input
-              type="text"
-              id="image_url"
-              name="image_url"
-              value={formData.image_url}
-              onChange={handleInputChange}
-              placeholder="/images/img10.jpg"
+              type="file"
+              id="image_upload"
+              name="image_upload"
+              accept="image/jpeg,image/png,image/webp,image/jpg"
+              onChange={handleFileChange}
               className={errors.image_url ? 'error' : ''}
             />
             {errors.image_url && <span className="error-text">{errors.image_url}</span>}
+            
+            {imagePreview && (
+              <div className="image-preview">
+                <img src={imagePreview} alt="Service Preview" />
+              </div>
+            )}
           </div>
 
           <div className="form-row">

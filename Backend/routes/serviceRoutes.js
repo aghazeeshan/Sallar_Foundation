@@ -2,8 +2,42 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { promisePool } = require('../config/database');
 const { authenticateToken, requireModerator } = require('../middleware/auth');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs').promises;
 
 const router = express.Router();
+
+// Multer configuration for service image uploads
+const storage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    const uploadDir = 'uploads/services';
+    try {
+      await fs.mkdir(uploadDir, { recursive: true });
+      cb(null, uploadDir);
+    } catch (error) {
+      cb(error);
+    }
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1E9);
+    cb(null, 'service_' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (extname && mimetype) {
+      return cb(null, true);
+    }
+    cb(new Error('Only image files are allowed!'));
+  },
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
 
 // Get all active services
 router.get('/', async (req, res) => {
@@ -83,12 +117,18 @@ router.get('/:id', async (req, res) => {
 router.post('/', [
   authenticateToken,
   requireModerator,
+  upload.single('image'),
   body('title').notEmpty().withMessage('Title is required'),
   body('description').optional(),
-  body('image_url').notEmpty().withMessage('Image URL is required'),
+  body('title').custom((val, { req }) => {
+    if (!req.file && !req.body.image_url) {
+      throw new Error('Image is required');
+    }
+    return true;
+  }),
   body('icon_class').optional(),
-  body('is_active').optional().isBoolean().withMessage('is_active must be boolean'),
-  body('display_order').optional().isInt().withMessage('display_order must be integer')
+  body('is_active').optional(),
+  body('display_order').optional()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -100,12 +140,15 @@ router.post('/', [
       });
     }
 
-    const { title, description = null, image_url, icon_class = null, is_active = true, display_order = 0 } = req.body;
+    const { title, description = null, icon_class = null, display_order = 0 } = req.body;
+    const is_active = req.body.is_active === 'true' || req.body.is_active === true;
+    
+    const computedImageUrl = req.file ? `/uploads/services/${req.file.filename}` : req.body.image_url;
 
     const [result] = await promisePool.execute(`
       INSERT INTO services (title, description, image_url, icon_class, is_active, display_order)
       VALUES (?, ?, ?, ?, ?, ?)
-    `, [title, description, image_url, icon_class, is_active, display_order]);
+    `, [title, description, computedImageUrl, icon_class, is_active, parseInt(display_order) || 0]);
 
     res.status(201).json({
       success: true,
@@ -126,9 +169,10 @@ router.post('/', [
 router.put('/:id', [
   authenticateToken,
   requireModerator,
+  upload.single('image'),
   body('title').optional().notEmpty().withMessage('Title cannot be empty'),
-  body('is_active').optional().isBoolean().withMessage('is_active must be boolean'),
-  body('display_order').optional().isInt().withMessage('display_order must be integer')
+  body('is_active').optional(),
+  body('display_order').optional()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -160,8 +204,14 @@ router.put('/:id', [
     const updateFields = [];
     const updateValues = [];
 
+    // Handle image upload
+    if (req.file) {
+      updateFields.push('image_url = ?');
+      updateValues.push(`/uploads/services/${req.file.filename}`);
+    }
+
     Object.keys(updates).forEach(key => {
-      if (updates[key] !== undefined) {
+      if (updates[key] !== undefined && key !== 'image') {
         updateFields.push(`${key} = ?`);
         updateValues.push(updates[key]);
       }

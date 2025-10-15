@@ -77,7 +77,7 @@ const Settings = () => {
 
   const applyTheme = (colors) => {
     Object.entries(colors).forEach(([property, value]) => {
-      document.documentElement.style.setProperty(`--${property}`, value);
+        document.documentElement.style.setProperty(`--${property}`, value);
     });
   };
 
@@ -227,7 +227,7 @@ const Settings = () => {
       <div className="content-header">
         <h1>Settings</h1>
         <p>Manage website settings and configurations</p>
-      </div>
+        </div>
 
       {/* Tabs */}
       <div className="settings-tabs">
@@ -265,14 +265,14 @@ const Settings = () => {
       {/* Theme Settings Tab */}
       {activeTab === 'theme' && (
         <div className="settings-content">
-          <div className="settings-card">
+        <div className="settings-card">
             <h3><i className="fas fa-palette"></i> Theme Colors</h3>
             <div className="color-settings-grid">
-              <div className="color-group">
-                <label>Primary Color</label>
+            <div className="color-group">
+              <label>Primary Color</label>
                 <div className="color-input-wrapper">
-                  <input 
-                    type="color" 
+                <input 
+                  type="color" 
                     value={themeSettings.primaryColor}
                     onChange={(e) => handleThemeChange('primaryColor', e.target.value)}
                   />
@@ -282,60 +282,60 @@ const Settings = () => {
                     onChange={(e) => handleThemeChange('primaryColor', e.target.value)}
                     className="color-hex"
                   />
-                </div>
-              </div>
-
-              <div className="color-group">
-                <label>Secondary Color</label>
-                <div className="color-input-wrapper">
-                  <input 
-                    type="color" 
-                    value={themeSettings.secondaryColor}
-                    onChange={(e) => handleThemeChange('secondaryColor', e.target.value)}
-                  />
-                  <input 
-                    type="text" 
-                    value={themeSettings.secondaryColor}
-                    onChange={(e) => handleThemeChange('secondaryColor', e.target.value)}
-                    className="color-hex"
-                  />
-                </div>
-              </div>
-
-              <div className="color-group">
-                <label>Text Dark</label>
-                <div className="color-input-wrapper">
-                  <input 
-                    type="color" 
-                    value={themeSettings.textDark}
-                    onChange={(e) => handleThemeChange('textDark', e.target.value)}
-                  />
-                  <input 
-                    type="text" 
-                    value={themeSettings.textDark}
-                    onChange={(e) => handleThemeChange('textDark', e.target.value)}
-                    className="color-hex"
-                  />
-                </div>
-              </div>
-
-              <div className="color-group">
-                <label>Text Light</label>
-                <div className="color-input-wrapper">
-                  <input 
-                    type="color" 
-                    value={themeSettings.textLight}
-                    onChange={(e) => handleThemeChange('textLight', e.target.value)}
-                  />
-                  <input 
-                    type="text" 
-                    value={themeSettings.textLight}
-                    onChange={(e) => handleThemeChange('textLight', e.target.value)}
-                    className="color-hex"
-                  />
-                </div>
               </div>
             </div>
+
+            <div className="color-group">
+              <label>Secondary Color</label>
+                <div className="color-input-wrapper">
+                <input 
+                  type="color" 
+                    value={themeSettings.secondaryColor}
+                    onChange={(e) => handleThemeChange('secondaryColor', e.target.value)}
+                  />
+                  <input 
+                    type="text" 
+                    value={themeSettings.secondaryColor}
+                    onChange={(e) => handleThemeChange('secondaryColor', e.target.value)}
+                    className="color-hex"
+                  />
+              </div>
+            </div>
+
+            <div className="color-group">
+              <label>Text Dark</label>
+                <div className="color-input-wrapper">
+                <input 
+                  type="color" 
+                    value={themeSettings.textDark}
+                    onChange={(e) => handleThemeChange('textDark', e.target.value)}
+                  />
+                  <input 
+                    type="text" 
+                    value={themeSettings.textDark}
+                    onChange={(e) => handleThemeChange('textDark', e.target.value)}
+                    className="color-hex"
+                  />
+              </div>
+            </div>
+
+            <div className="color-group">
+              <label>Text Light</label>
+                <div className="color-input-wrapper">
+                <input 
+                  type="color" 
+                    value={themeSettings.textLight}
+                    onChange={(e) => handleThemeChange('textLight', e.target.value)}
+                  />
+                  <input 
+                    type="text" 
+                    value={themeSettings.textLight}
+                    onChange={(e) => handleThemeChange('textLight', e.target.value)}
+                    className="color-hex"
+                  />
+            </div>
+          </div>
+        </div>
 
             <div className="settings-preview">
               <h4>Preview</h4>
@@ -549,22 +549,22 @@ const Settings = () => {
                     <span>Send emails for volunteer applications</span>
                   </label>
                 </div>
-              </div>
-            </div>
+          </div>
+        </div>
 
-            <div className="settings-actions">
+        <div className="settings-actions">
               <button className="btn btn-secondary" onClick={handleTestEmail} disabled={loading}>
                 <i className="fas fa-paper-plane"></i> Send Test Email
-              </button>
+          </button>
               <button className="btn btn-primary" onClick={handleEmailSave} disabled={loading}>
                 <i className="fas fa-save"></i> {loading ? 'Saving...' : 'Save Email Settings'}
-              </button>
-            </div>
-          </div>
+          </button>
+        </div>
+      </div>
         </div>
       )}
     </div>
   );
 };
 
-export default Settings;
+export default Settings; 

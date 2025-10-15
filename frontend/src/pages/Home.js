@@ -302,24 +302,31 @@ const Home = () => {
                 }}
                 className="services-swiper"
               >
-                {services.map((service, index) => (
-                  <SwiperSlide key={service.id}>
-                    <div className="service-card">
-                      <div className="service-image">
-                        <img src={service.image_url} alt={service.title} />
-                        <div className="service-icon">
-                          <div className="charity-icon green">
-                            <i className={`fas ${service.icon_class || 'fa-cog'}`}></i>
+                {services.map((service, index) => {
+                  // Construct proper image URL
+                  const imageUrl = service.image_url?.startsWith('/uploads/') 
+                    ? `http://localhost:5000${service.image_url}` 
+                    : service.image_url;
+                  
+                  return (
+                    <SwiperSlide key={service.id}>
+                      <div className="service-card">
+                        <div className="service-image">
+                          <img src={imageUrl} alt={service.title} />
+                          <div className="service-icon">
+                            <div className="charity-icon green">
+                              <i className={`fas ${service.icon_class || 'fa-cog'}`}></i>
+                            </div>
                           </div>
                         </div>
+                        <div className="service-content">
+                          <h3>{service.title}</h3>
+                          <p>{service.description}</p>
+                        </div>
                       </div>
-                      <div className="service-content">
-                        <h3>{service.title}</h3>
-                        <p>{service.description}</p>
-                      </div>
-                    </div>
-                  </SwiperSlide>
-                ))}
+                    </SwiperSlide>
+                  );
+                })}
               </Swiper>
             ) : (
               // Fallback static content if no services loaded
