@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs').promises;
 const { authenticateToken, requireModerator } = require('../middleware/auth');
 const { promisePool } = require('../config/database');
-const nodemailer = require('nodemailer');
+const emailService = require('../services/emailService');
 
 // Multer configuration for logo uploads
 const storage = multer.diskStorage({
@@ -270,48 +270,26 @@ router.post('/email/test', [authenticateToken, requireModerator], async (req, re
   try {
     const { email } = req.body;
 
-    // Get email settings
-    const [rows] = await promisePool.execute(
-      'SELECT * FROM settings WHERE setting_type = ? LIMIT 1',
-      ['email']
-    );
-
-    if (rows.length === 0) {
+    if (!email) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Email settings not configured' 
+        message: 'Email address is required' 
       });
     }
 
-    const emailSettings = JSON.parse(rows[0].setting_value);
-
-    // Create transporter
-    const transporter = nodemailer.createTransporter({
-      host: emailSettings.smtpHost,
-      port: emailSettings.smtpPort,
-      secure: emailSettings.smtpPort == 465,
-      auth: {
-        user: emailSettings.smtpUser,
-        pass: emailSettings.smtpPassword
-      }
-    });
-
-    // Send test email
-    await transporter.sendMail({
-      from: `"Sallar Foundation" <${emailSettings.smtpUser}>`,
-      to: email,
-      subject: 'Test Email - Sallar Foundation',
-      html: `
-        <h2>Test Email</h2>
-        <p>This is a test email from Sallar Foundation admin panel.</p>
-        <p>If you received this, your email configuration is working correctly!</p>
-      `
-    });
-
-    res.json({ 
-      success: true, 
-      message: 'Test email sent successfully' 
-    });
+    const result = await emailService.sendTestEmail(email);
+    
+    if (result.success) {
+      res.json({ 
+        success: true, 
+        message: 'Test email sent successfully! Check your inbox (and spam folder).' 
+      });
+    } else {
+      res.status(500).json({ 
+        success: false, 
+        message: result.message || 'Failed to send test email'
+      });
+    }
   } catch (error) {
     console.error('Error sending test email:', error);
     res.status(500).json({ 
