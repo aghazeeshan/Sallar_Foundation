@@ -7,9 +7,8 @@ echo "Starting SSL setup for domain: $DOMAIN"
 if [ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
     echo "SSL certificates not found. Obtaining new certificates..."
     
-    # Start nginx with HTTP only configuration first
-    envsubst '${DOMAIN}' < /etc/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf.tmp
-    mv /etc/nginx/conf.d/default.conf.tmp /etc/nginx/conf.d/default.conf
+    # Start nginx with HTTP-only configuration (serves ACME challenge)
+    envsubst '${DOMAIN}' < /etc/nginx/templates/nginx.http.conf > /etc/nginx/conf.d/default.conf
     
     # Start nginx in background
     nginx &
@@ -41,10 +40,10 @@ fi
 # Setup SSL configuration
 if [ -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
     echo "Setting up SSL configuration..."
-    envsubst '${DOMAIN}' < /etc/nginx/conf.d/nginx.prod.conf > /etc/nginx/conf.d/default.conf
+    envsubst '${DOMAIN}' < /etc/nginx/templates/nginx.prod.conf > /etc/nginx/conf.d/default.conf
 else
-    echo "SSL certificates not available. Using HTTP only configuration..."
-    envsubst '${DOMAIN}' < /etc/nginx/conf.d/nginx.conf > /etc/nginx/conf.d/default.conf
+    echo "SSL certificates not available. Using HTTP-only configuration..."
+    envsubst '${DOMAIN}' < /etc/nginx/templates/nginx.http.conf > /etc/nginx/conf.d/default.conf
 fi
 
 # Setup cron job for certificate renewal

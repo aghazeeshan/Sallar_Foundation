@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  mysql:
+    ports:
+      - "3307:3306"
+
+  backend:
+    environment:
+      FRONTEND_URL: http://localhost:3075
+    ports:
+      - "5075:5000"
+
+  frontend:
+    ports:
+      - "3075:80"
+
+
+

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import LoginModal from '../components/LoginModal';
+// Login modal is handled on /development route only
 import AdminHeader from './components/AdminHeader';
 import EventForm from './components/EventForm';
 import PostForm from './components/PostForm';
@@ -29,14 +29,13 @@ const AdminDashboard = ({ setIsAdminMode }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Check authentication
+  // Enforce auth: if no token, redirect to /development
   useEffect(() => {
-    if (!adminService.isLoggedIn()) {
+    const hasToken = !!localStorage.getItem('adminToken');
+    if (!hasToken) {
       navigate('/development');
-      return;
     }
   }, [navigate]);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
   const [isPostFormOpen, setIsPostFormOpen] = useState(false);
   const [events, setEvents] = useState([]);
@@ -79,11 +78,7 @@ const AdminDashboard = ({ setIsAdminMode }) => {
   }, [setIsAdminMode]);
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const adminToken = localStorage.getItem('adminToken');
-    if (!isLoggedIn || !adminToken) {
-      setIsLoginModalOpen(true);
-    }
+    // Do not enforce login; allow dashboard to open without redirect
   }, []);
 
   useEffect(() => {
@@ -230,7 +225,7 @@ const AdminDashboard = ({ setIsAdminMode }) => {
     adminService.logout();
     setIsAdminMode(false);
     document.body.classList.remove('admin-mode');
-    navigate('/');
+    navigate('/development');
   };
 
   const handleAddEvent = (newEvent) => {
@@ -1698,15 +1693,7 @@ Thank you for your generous donation!
         </div>
       </div>
       
-      <LoginModal 
-        isOpen={isLoginModalOpen} 
-        onClose={() => {
-          setIsLoginModalOpen(false);
-          if (!localStorage.getItem('isLoggedIn')) {
-            navigate('/');
-          }
-        }} 
-      />
+      {/* Remove inline login from dashboard */}
 
       <EventForm 
         isOpen={isEventFormOpen}

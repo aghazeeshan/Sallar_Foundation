@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api/services';
+const API_BASE_URL = '/api/services';
 
 export const serviceService = {
   // Get all services

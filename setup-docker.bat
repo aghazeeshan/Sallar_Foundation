@@ -54,10 +54,10 @@ docker-compose ps
 
 echo.
 echo 🌐 Application URLs:
-echo    Frontend: http://localhost
-echo    Admin Panel: http://localhost/development
-echo    Backend API: http://localhost:5000/api
-echo    Health Check: http://localhost:5000/api/health
+echo    Frontend: http://localhost:3075
+echo    Admin Panel: http://localhost:3075/development
+echo    Backend API: http://localhost:5075/api
+echo    Health Check: http://localhost:5075/api/health
 echo.
 echo 📊 Admin Credentials:
 echo    Username: admin

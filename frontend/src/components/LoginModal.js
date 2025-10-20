@@ -4,7 +4,7 @@ import { adminService } from '../services/adminService';
 import './LoginModal.css';
 import SuccessPopup from './SuccessPopup';
 
-const LoginModal = ({ isOpen, onClose }) => {
+const LoginModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -27,8 +27,15 @@ const LoginModal = ({ isOpen, onClose }) => {
 
   const handleSuccessClose = () => {
     setShowSuccess(false);
-    navigate('/admin/dashboard');
     onClose();
+    // Small delay to ensure localStorage is written
+    setTimeout(() => {
+      if (typeof onSuccess === 'function') {
+        onSuccess();
+      } else {
+        window.location.href = '/admin/dashboard';
+      }
+    }, 300);
   };
 
   if (!isOpen) return null;

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api/volunteers';
+const API_BASE_URL = '/api/volunteers';
 
 export const volunteerService = {
   // Get all volunteers for admin

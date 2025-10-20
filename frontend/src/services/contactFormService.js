@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api/contact-forms';
+const API_BASE_URL = '/api/contact-forms';
 
 export const contactFormService = {
   // Get all contact forms for admin

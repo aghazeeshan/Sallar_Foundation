@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -24,15 +24,22 @@ import DonationPopup from './components/DonationPopup';
 
 function App() {
   const [isAdminMode, setIsAdminMode] = useState(false);
-  const LoginPage = () => (
-    <LoginModal 
-      isOpen={true} 
-      onClose={() => {
-        // Navigate away from login if closed
-        window.location.href = '/';
-      }}
-    />
-  );
+  const LoginPage = () => {
+    const navigate = useNavigate();
+    
+    const handleLoginSuccess = () => {
+      // After successful login, go to dashboard
+      navigate('/admin/dashboard');
+    };
+
+    return (
+      <LoginModal 
+        isOpen={true}
+        onClose={() => { /* keep page */ }}
+        onSuccess={handleLoginSuccess}
+      />
+    );
+  };
 
   // Helper function to adjust color brightness
   const adjustColor = (color, percent) => {
@@ -50,17 +57,22 @@ function App() {
     ).toString(16).slice(1);
   };
 
-  // Check if we're in admin route
+  // Toggle admin mode based on current path
   useEffect(() => {
-    const path = window.location.pathname;
-    setIsAdminMode(path.includes('/admin') || path.startsWith('/development'));
+    const updateAdminMode = () => {
+      const path = window.location.pathname;
+      const adminRoute = path.includes('/admin') || path.startsWith('/development');
+      setIsAdminMode(adminRoute);
+      if (adminRoute) {
+        document.body.classList.add('admin-mode');
+      } else {
+        document.body.classList.remove('admin-mode');
+      }
+    };
 
-    // Add/remove admin-mode class on body
-    if (path.includes('/admin') || path.startsWith('/development')) {
-      document.body.classList.add('admin-mode');
-    } else {
-      document.body.classList.remove('admin-mode');
-    }
+    updateAdminMode();
+    window.addEventListener('popstate', updateAdminMode);
+    return () => window.removeEventListener('popstate', updateAdminMode);
   }, []);
 
   useEffect(() => {

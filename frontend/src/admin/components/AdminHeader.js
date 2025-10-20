@@ -20,8 +20,9 @@ const AdminHeader = ({ userEmail, toggleSidebar }) => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    navigate('/');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
+    navigate('/development');
   };
 
   return (

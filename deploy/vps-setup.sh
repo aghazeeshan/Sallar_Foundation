@@ -1,120 +1,136 @@
 #!/bin/bash
 
-# VPS Setup Script for Sallar Foundation
-# Run this script on your VPS to set up the environment
+# Complete VPS Setup Script for Sallar Foundation
+# Run this script on your VPS to setup everything automatically
 
 set -e
 
-echo "🚀 Setting up Sallar Foundation on VPS..."
+echo "🚀 Starting Sallar Foundation VPS Setup..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Check if running as root
+if [[ $EUID -eq 0 ]]; then
+   print_error "This script should not be run as root. Please run as a regular user with sudo privileges."
+   exit 1
+fi
 
 # Update system
-echo "📦 Updating system packages..."
+print_status "Updating system packages..."
 sudo apt update && sudo apt upgrade -y
 
 # Install Docker
-echo "🐳 Installing Docker..."
+print_status "Installing Docker..."
 if ! command -v docker &> /dev/null; then
     curl -fsSL https://get.docker.com -o get-docker.sh
     sudo sh get-docker.sh
     sudo usermod -aG docker $USER
     rm get-docker.sh
+    print_success "Docker installed successfully"
+else
+    print_success "Docker already installed"
 fi
 
 # Install Docker Compose
-echo "🐳 Installing Docker Compose..."
+print_status "Installing Docker Compose..."
 if ! command -v docker-compose &> /dev/null; then
     sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
-fi
-
-# Install Git
-echo "📚 Installing Git..."
-sudo apt install -y git curl wget
-
-# Create project directory
-echo "📁 Creating project directory..."
-sudo mkdir -p /var/www/sallar-foundation
-sudo chown $USER:$USER /var/www/sallar-foundation
-cd /var/www/sallar-foundation
-
-# Clone repository
-echo "📥 Cloning repository..."
-if [ ! -d ".git" ]; then
-    git clone https://github.com/aghazeeshan/Sallar_Foundation.git .
+    print_success "Docker Compose installed successfully"
 else
-    git pull origin main
+    print_success "Docker Compose already installed"
 fi
 
-# Create environment file
-echo "⚙️ Setting up environment variables..."
-if [ ! -f ".env" ]; then
-    cp env.example .env
-    echo ""
-    echo "🔧 Please edit the .env file with your actual values:"
-    echo "   nano .env"
-    echo ""
-    echo "Required variables to update:"
-    echo "   - MYSQL_ROOT_PASSWORD"
-    echo "   - MYSQL_PASSWORD"
-    echo "   - JWT_SECRET"
-    echo "   - DOMAIN"
-    echo "   - SSL_EMAIL"
-    echo ""
-    read -p "Press Enter after updating .env file..."
-fi
+# Install required packages
+print_status "Installing required packages..."
+sudo apt install -y git nginx certbot python3-certbot-nginx ufw curl wget
 
-# Create necessary directories
-echo "📁 Creating directories..."
-mkdir -p ssl nginx/conf.d
-
-# Set up firewall
-echo "🔥 Setting up firewall..."
-sudo ufw allow ssh
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
+# Configure firewall
+print_status "Configuring firewall..."
+sudo ufw allow 22    # SSH
+sudo ufw allow 80    # HTTP
+sudo ufw allow 443   # HTTPS
 sudo ufw --force enable
 
-# Set up log rotation
-echo "📝 Setting up log rotation..."
-sudo tee /etc/logrotate.d/docker-compose > /dev/null <<EOF
-/var/www/sallar-foundation/logs/*.log {
-    daily
-    missingok
-    rotate 14
-    compress
-    notifempty
-    create 644 root root
-    postrotate
-        docker-compose restart > /dev/null 2>&1 || true
-    endscript
-}
+# Create project directory
+print_status "Setting up project directory..."
+sudo mkdir -p /var/www/sallar
+sudo chown $USER:$USER /var/www/sallar
+
+# Setup Nginx configuration
+print_status "Configuring Nginx..."
+sudo cp nginx/sallarfoundation.org.conf /etc/nginx/sites-available/sallarfoundation.org
+sudo ln -sf /etc/nginx/sites-available/sallarfoundation.org /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl reload nginx
+
+# Setup SSL certificate
+print_status "Setting up SSL certificate..."
+if [ ! -f /etc/letsencrypt/live/sallarfoundation.org/fullchain.pem ]; then
+    sudo certbot --nginx -d sallarfoundation.org -d www.sallarfoundation.org --non-interactive --agree-tos --email your-email@example.com
+    print_success "SSL certificate installed"
+else
+    print_success "SSL certificate already exists"
+fi
+
+# Setup auto-renewal
+print_status "Setting up SSL auto-renewal..."
+(crontab -l 2>/dev/null; echo "0 12 * * * /usr/bin/certbot renew --quiet") | crontab -
+
+# Create systemd service for auto-start
+print_status "Creating systemd service..."
+sudo tee /etc/systemd/system/sallar.service > /dev/null <<EOF
+[Unit]
+Description=Sallar Foundation Docker Compose
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/var/www/sallar
+ExecStart=/usr/local/bin/docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+ExecStop=/usr/local/bin/docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+TimeoutStartSec=0
+User=$USER
+Group=$USER
+
+[Install]
+WantedBy=multi-user.target
 EOF
 
-# Create logs directory
-mkdir -p logs
+sudo systemctl daemon-reload
+sudo systemctl enable sallar.service
 
-# Set up automatic updates
-echo "🔄 Setting up automatic updates..."
-sudo tee /etc/cron.d/sallar-foundation-update > /dev/null <<EOF
-# Update Sallar Foundation every day at 2 AM
-0 2 * * * $USER cd /var/www/sallar-foundation && /var/www/sallar-foundation/deploy/update.sh >> /var/www/sallar-foundation/logs/update.log 2>&1
-EOF
+print_success "VPS setup completed successfully!"
+print_status "Next steps:"
+echo "1. Clone your repository: git clone <your-repo-url> /var/www/sallar"
+echo "2. Copy env.prod to .env: cp env.prod .env"
+echo "3. Edit .env with your production values"
+echo "4. Run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build"
+echo "5. Import database: docker exec -i sallar_mysql mysql -u root -p'password' charity_foundation < charity_foundation.sql"
 
-# Make scripts executable
-chmod +x deploy/*.sh
-
-echo ""
-echo "✅ VPS setup completed!"
-echo ""
-echo "Next steps:"
-echo "1. Edit .env file: nano .env"
-echo "2. Start the application: ./deploy/start.sh"
-echo "3. Check status: ./deploy/status.sh"
-echo ""
-echo "Useful commands:"
-echo "  - Start: ./deploy/start.sh"
-echo "  - Stop: ./deploy/stop.sh"
-echo "  - Update: ./deploy/update.sh"
-echo "  - Status: ./deploy/status.sh"
-echo "  - Logs: ./deploy/logs.sh"
-echo ""
+print_warning "Please update the email in the SSL certificate command above!"
+print_warning "Please update your repository URL and database password!"

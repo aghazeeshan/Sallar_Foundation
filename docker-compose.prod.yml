@@ -67,7 +67,6 @@ services:
       - SSL_EMAIL=${SSL_EMAIL}
     volumes:
       - ./ssl:/etc/letsencrypt
-      - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - backend
     networks:

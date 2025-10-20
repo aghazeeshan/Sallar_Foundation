@@ -6,15 +6,16 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (!isLoggedIn) {
-      navigate('/');
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) {
+      // Stay on page; parent routes should handle prompting login
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    navigate('/');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
+    navigate('/development');
   };
 
   return (

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api/banner';
+const API_BASE_URL = '/api/banner';
 
 export const bannerService = {
   // Get all banners

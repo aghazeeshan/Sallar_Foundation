@@ -49,7 +49,7 @@ router.post('/login', [
       });
     }
 
-    // Generate JWT token (expires in 1 hour)
+    // Generate JWT token (long-lived: 365 days)
     const token = jwt.sign(
       { 
         id: user.id, 
@@ -58,7 +58,7 @@ router.post('/login', [
         role: user.role 
       },
       JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '365d' }
     );
 
     res.json({

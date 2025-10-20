@@ -60,9 +60,9 @@ if docker-compose ps | grep -q "Up"; then
         echo "   Admin: https://$DOMAIN/development"
         echo "   API: https://$DOMAIN/api"
     else
-        echo "   Frontend: http://localhost"
-        echo "   Admin: http://localhost/development"
-        echo "   API: http://localhost:5000/api"
+        echo "   Frontend: http://localhost:3075"
+        echo "   Admin: http://localhost:3075/development"
+        echo "   API: http://localhost:5075/api"
     fi
     
     echo ""

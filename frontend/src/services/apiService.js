@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = '/api';
 
 // Blog API Service
 export const blogService = {
@@ -123,7 +123,7 @@ export const formService = {
   // Submit contact form
   submitContact: async (formData) => {
     try {
-      const response = await fetch('http://localhost:5000/submit-form', {
+      const response = await fetch('/submit-form', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +141,7 @@ export const formService = {
   // Submit donation form
   submitDonation: async (donationData) => {
     try {
-      const response = await fetch('http://localhost:5000/submit-donation', {
+      const response = await fetch('/submit-donation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ export const formService = {
   // Submit volunteer form
   submitVolunteer: async (volunteerData) => {
     try {
-      const response = await fetch('http://localhost:5000/submit-volunteer', {
+      const response = await fetch('/submit-volunteer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

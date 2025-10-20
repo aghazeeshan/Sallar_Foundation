@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api/admin';
+const API_BASE_URL = '/api/admin';
 
 export const adminService = {
   // Login admin
@@ -21,8 +21,16 @@ export const adminService = {
       
       // Store token and user data
       if (data.success && data.data.token) {
+        console.log('✅ Login successful, storing token...');
         localStorage.setItem('adminToken', data.data.token);
         localStorage.setItem('adminUser', JSON.stringify(data.data.user));
+        localStorage.setItem('isLoggedIn', 'true');
+        console.log('✅ Token stored successfully:', {
+          token: data.data.token.substring(0, 20) + '...',
+          user: data.data.user.username
+        });
+      } else {
+        console.error('❌ Login failed: No token in response', data);
       }
       
       return data;
@@ -36,6 +44,7 @@ export const adminService = {
   logout: () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
+    localStorage.removeItem('isLoggedIn');
   },
 
   // Get current user
@@ -53,7 +62,13 @@ export const adminService = {
   isLoggedIn: () => {
     const token = localStorage.getItem('adminToken');
     const user = localStorage.getItem('adminUser');
-    return !!(token && user);
+    const isLoggedIn = !!(token && user);
+    console.log('🔍 Checking login status:', {
+      hasToken: !!token,
+      hasUser: !!user,
+      isLoggedIn: isLoggedIn
+    });
+    return isLoggedIn;
   },
 
   // Get all admins

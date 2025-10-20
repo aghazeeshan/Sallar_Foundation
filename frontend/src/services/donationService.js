@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api/donations';
+const API_BASE_URL = '/api/donations';
 
 export const donationService = {
   // Get all donations for admin

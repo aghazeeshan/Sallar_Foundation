@@ -102,10 +102,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <LoginModal 
-        isOpen={isLoginModalOpen} 
-        onClose={() => setIsLoginModalOpen(false)} 
-      />
+      {/* Login modal removed from Footer to avoid overlay on admin pages */}
     </>
   );
 };
