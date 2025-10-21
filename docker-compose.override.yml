@@ -3,17 +3,17 @@ version: '3.8'
 services:
   mysql:
     ports:
-      - "3307:3306"
+      - "4020:3306"
 
   backend:
     environment:
-      FRONTEND_URL: http://localhost:3075
+      FRONTEND_URL: http://localhost:4000
     ports:
-      - "5075:5000"
+      - "4010:5000"
 
   frontend:
     ports:
-      - "3075:80"
+      - "4000:80"
 
 
 

@@ -68,6 +68,11 @@ cd /var/www/sallar
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
 ```
 
+### Port Configuration:
+- **Frontend**: http://localhost:4000
+- **Backend**: http://localhost:4010
+- **Database**: localhost:4020
+
 ### View Logs:
 ```bash
 cd /var/www/sallar

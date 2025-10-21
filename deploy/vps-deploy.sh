@@ -86,17 +86,17 @@ print_status "Testing application..."
 sleep 10
 
 # Test frontend
-if curl -f -s http://localhost:3075 > /dev/null; then
-    print_success "Frontend is running on port 3075"
+if curl -f -s http://localhost:4000 > /dev/null; then
+    print_success "Frontend is running on port 4000"
 else
-    print_error "Frontend is not responding on port 3075"
+    print_error "Frontend is not responding on port 4000"
 fi
 
 # Test backend
-if curl -f -s http://localhost:5075/api/health > /dev/null; then
-    print_success "Backend is running on port 5075"
+if curl -f -s http://localhost:4010/api/health > /dev/null; then
+    print_success "Backend is running on port 4010"
 else
-    print_error "Backend is not responding on port 5075"
+    print_error "Backend is not responding on port 4010"
 fi
 
 # Test database
