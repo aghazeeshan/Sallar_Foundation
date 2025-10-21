@@ -33,6 +33,7 @@ const Home = () => {
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [services, setServices] = useState([]);
   const [galleryImages, setGalleryImages] = useState([]);
+  const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
     // Get all active banners from API
@@ -81,6 +82,23 @@ const Home = () => {
       }
     };
     loadGalleryImages();
+  }, []);
+
+  useEffect(() => {
+    // Get blogs from localStorage (same as events page)
+    const loadBlogs = () => {
+      try {
+        const savedBlogs = localStorage.getItem('events');
+        const allBlogs = savedBlogs ? JSON.parse(savedBlogs) : [];
+        // Get latest 5 blogs for home page
+        const latestBlogs = allBlogs.slice(0, 5);
+        setBlogs(latestBlogs);
+      } catch (error) {
+        console.error('Error loading blogs:', error);
+        setBlogs([]);
+      }
+    };
+    loadBlogs();
   }, []);
 
   const getDefaultGalleryImages = () => {
@@ -535,70 +553,87 @@ const Home = () => {
           <Link to="/events" className="contact-btn">View More <i className="fas fa-arrow-right"></i></Link>
 
           <div className="blog-grid">
-            <div className="blog-card">
-              <div className="blog-image">
-                <img src="/images/img10.jpg" alt="Blog 1" />
-                <div className="blog-overlay">
-                  <h3>Empowering Communities Through Shelter and Support</h3>
-                  {/* <p>Supporting education initiatives for underprivileged children worldwide.</p> */}
-                  <Link to="/blog/17370088595141" className="read-more">
-                    Read More <i className="fas fa-arrow-right"></i>
-                  </Link>
+            {blogs.length > 0 ? (
+              blogs.map((blog, index) => (
+                <div key={blog.id || index} className="blog-card">
+                  <div className="blog-image">
+                    <img 
+                      src={blog.image || `/images/img${(index % 9) + 1}.jpg`} 
+                      alt={blog.title || `Blog ${index + 1}`} 
+                    />
+                    <div className="blog-overlay">
+                      <h3>{blog.title || `Blog ${index + 1}`}</h3>
+                      <Link to={`/blog/${blog.id || index + 1}`} className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              ))
+            ) : (
+              // Fallback to default blogs if no blogs are available
+              <>
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/img10.jpg" alt="Blog 1" />
+                    <div className="blog-overlay">
+                      <h3>Empowering Communities Through Shelter and Support</h3>
+                      <Link to="/blog/17370088595141" className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
 
-            <div className="blog-card">
-              <div className="blog-image">
-                <img src="/images/img1.jpg" alt="Blog 2" />
-                <div className="blog-overlay">
-                  <h3>Health for All: Our Monthly Medical Camps</h3>
-                  {/* <p>Providing meals and nutrition support to communities in need.</p> */}
-                  <Link to="/blog/2" className="read-more">
-                    Read More <i className="fas fa-arrow-right"></i>
-                  </Link>
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/img1.jpg" alt="Blog 2" />
+                    <div className="blog-overlay">
+                      <h3>Health for All: Our Monthly Medical Camps</h3>
+                      <Link to="/blog/2" className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="blog-card">
-              <div className="blog-image">
-                <img src="/images/img6.jpg" alt="Blog 3" />
-                <div className="blog-overlay">
-                  <h3>Creating Opportunities, One Rickshaw at a Time</h3>
-                  {/* <p>Delivering essential medical services to remote areas.</p> */}
-                  <Link to="/blog/3" className="read-more">
-                    Read More <i className="fas fa-arrow-right"></i>
-                  </Link>
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/img6.jpg" alt="Blog 3" />
+                    <div className="blog-overlay">
+                      <h3>Creating Opportunities, One Rickshaw at a Time</h3>
+                      <Link to="/blog/3" className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="blog-card">
-              <div className="blog-image">
-                <img src="/images/img9.jpg" alt="Blog 4" />
-                <div className="blog-overlay">
-                  <h3>Empowering Women with Sewing Machines</h3>
-                  {/* <p>Building stronger communities through local initiatives.</p> */}
-                  <Link to="/blog/4" className="read-more">
-                    Read More <i className="fas fa-arrow-right"></i>
-                  </Link>
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/img9.jpg" alt="Blog 4" />
+                    <div className="blog-overlay">
+                      <h3>Empowering Women with Sewing Machines</h3>
+                      <Link to="/blog/4" className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="blog-card">
-              <div className="blog-image">
-                <img src="/images/img4.jpg" alt="Blog 5" />
-                <div className="blog-overlay">
-                  <h3>Street Vending: Small Carts, Big Impact</h3>
-                  {/* <p>Supporting women through education and skill development.</p> */}
-                  <Link to="/blog/5" className="read-more">
-                    Read More <i className="fas fa-arrow-right"></i>
-                  </Link>
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/img4.jpg" alt="Blog 5" />
+                    <div className="blog-overlay">
+                      <h3>Street Vending: Small Carts, Big Impact</h3>
+                      <Link to="/blog/5" className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </div>
       </section>
