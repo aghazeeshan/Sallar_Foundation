@@ -12,34 +12,86 @@ const EventForm = ({ isOpen, onClose, onSubmit }) => {
     tags: '',
     highlights: ''
   });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    try {
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return data.imageUrl;
+      } else {
+        throw new Error('Upload failed');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      // Fallback to base64 if upload fails
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsUploading(true);
     
-    // Create URL-friendly slug from title
-    const createSlug = (title) => {
-      return title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '');
-    };
-    
-    const formattedData = {
-      ...eventData,
-      id: Date.now(),
-      slug: createSlug(eventData.title),
-      tags: eventData.tags.split(',').map(tag => tag.trim()),
-      highlights: eventData.highlights.split(',').map(highlight => highlight.trim()),
-      createdAt: new Date().toISOString(),
-      isLatest: true,
-      author: "Admin", // You can make this dynamic later
-      content: eventData.content,
-      detailsImage: eventData.image, // Save the main image for the details page
-      galleryImages: [
-        eventData.image,
-        // You can add more images here if needed
-      ]
-    };
+    try {
+      let imageUrl = eventData.image;
+      
+      // If file is selected, upload it
+      if (selectedFile) {
+        imageUrl = await uploadImage(selectedFile);
+      }
+      
+      // Create URL-friendly slug from title
+      const createSlug = (title) => {
+        return title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)+/g, '');
+      };
+      
+      const formattedData = {
+        ...eventData,
+        id: Date.now(),
+        slug: createSlug(eventData.title),
+        tags: eventData.tags.split(',').map(tag => tag.trim()),
+        highlights: eventData.highlights.split(',').map(highlight => highlight.trim()),
+        createdAt: new Date().toISOString(),
+        isLatest: true,
+        author: "Admin", // You can make this dynamic later
+        content: eventData.content,
+        image: imageUrl, // Use uploaded image URL
+        detailsImage: imageUrl, // Save the main image for the details page
+        galleryImages: [
+          imageUrl,
+          // You can add more images here if needed
+        ]
+      };
     
     // Get existing events
     const existingEvents = JSON.parse(localStorage.getItem('events') || '[]');
@@ -72,6 +124,12 @@ const EventForm = ({ isOpen, onClose, onSubmit }) => {
     
     onSubmit(formattedData);
     onClose();
+    } catch (error) {
+      console.error('Error creating event:', error);
+      alert('Error creating event. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // Get categories from localStorage
@@ -125,13 +183,61 @@ const EventForm = ({ isOpen, onClose, onSubmit }) => {
           </div>
 
           <div className="form-group">
-            <label>Image URL</label>
-            <input
-              type="url"
-              value={eventData.image}
-              onChange={(e) => setEventData({...eventData, image: e.target.value})}
-              required
-            />
+            <label>Image</label>
+            <div className="image-upload-section">
+              <div className="upload-options">
+                <div className="file-upload">
+                  <input
+                    type="file"
+                    id="image-upload"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }}
+                  />
+                  <label htmlFor="image-upload" className="upload-btn">
+                    <i className="fas fa-upload"></i> Upload Image
+                  </label>
+                </div>
+                <div className="or-divider">OR</div>
+                <div className="url-input">
+                  <input
+                    type="url"
+                    placeholder="Enter image URL"
+                    value={eventData.image}
+                    onChange={(e) => setEventData({...eventData, image: e.target.value})}
+                  />
+                </div>
+              </div>
+              
+              {imagePreview && (
+                <div className="image-preview">
+                  <img src={imagePreview} alt="Preview" />
+                  <button 
+                    type="button" 
+                    className="remove-image-btn"
+                    onClick={() => {
+                      setSelectedFile(null);
+                      setImagePreview(null);
+                    }}
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                </div>
+              )}
+              
+              {eventData.image && !imagePreview && (
+                <div className="url-preview">
+                  <img src={eventData.image} alt="URL Preview" />
+                  <button 
+                    type="button" 
+                    className="remove-image-btn"
+                    onClick={() => setEventData({...eventData, image: ''})}
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="form-group">
@@ -178,8 +284,14 @@ const EventForm = ({ isOpen, onClose, onSubmit }) => {
             <button type="button" className="cancel-btn" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="submit-btn">
-              Create Event
+            <button type="submit" className="submit-btn" disabled={isUploading}>
+              {isUploading ? (
+                <>
+                  <i className="fas fa-spinner fa-spin"></i> Creating...
+                </>
+              ) : (
+                'Create Event'
+              )}
             </button>
           </div>
         </form>
