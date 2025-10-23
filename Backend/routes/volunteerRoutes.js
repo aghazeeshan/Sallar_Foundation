@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { promisePool } = require('../config/database');
 const { authenticateToken, requireModerator } = require('../middleware/auth');
+const emailService = require('../services/emailService');
 
 const router = express.Router();
 
@@ -98,6 +99,21 @@ router.post('/', [
       name, email, phone, age, address, skills, experience,
       availability, motivation, emergency_contact, emergency_phone
     ]);
+
+    // Send email notification
+    try {
+      await emailService.sendVolunteerEmail({
+        name,
+        email,
+        phone,
+        skills,
+        availability,
+        message: motivation
+      });
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      // Don't fail the request if email fails
+    }
 
     res.status(201).json({
       success: true,

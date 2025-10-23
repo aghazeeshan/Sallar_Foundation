@@ -50,7 +50,7 @@ const Services = () => {
         id: 3,
         title: "Flood & Disaster Relief",
         description: "Acting as a vital lifeline in times of crisis, our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter, while our long-term commitment focuses on helping communities recover, rebuild, and regain their self-sufficiency after the disaster has passed.",
-        image_url: "/images/sf-img6.jpg",
+        image_url: "/images/sf-img6.jpeg",
         icon_class: "fa-hands-helping"
       },
       {

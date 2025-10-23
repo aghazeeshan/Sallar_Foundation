@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { promisePool } = require('../config/database');
 const { authenticateToken, requireModerator } = require('../middleware/auth');
+const emailService = require('../services/emailService');
 
 const router = express.Router();
 
@@ -82,6 +83,20 @@ router.post('/', [
       INSERT INTO contact_forms (name, email, phone, subject, message, status)
       VALUES (?, ?, ?, ?, ?, 'new')
     `, [name, email, phone, subject, message]);
+
+    // Send email notification
+    try {
+      await emailService.sendContactEmail({
+        name,
+        email,
+        phone,
+        subject,
+        message
+      });
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      // Don't fail the request if email fails
+    }
 
     res.status(201).json({
       success: true,

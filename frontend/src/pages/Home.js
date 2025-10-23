@@ -93,7 +93,7 @@ const Home = () => {
         title: "Flood & Disaster Relief",
         sub_heading: "Provide Emergency Aid",
         description: "Acting as a vital lifeline in times of crisis, our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter, while our long-term commitment focuses on helping communities recover, rebuild, and regain their self-sufficiency after the disaster has passed.",
-        image_url: "/images/sf-img6.jpg",
+        image_url: "/images/sf-img6.jpeg",
         button_text: "Donate For Flood",
         link_url: "/donate",
         text_alignment: "left"
@@ -182,7 +182,7 @@ const Home = () => {
         id: 3,
         title: "Flood & Disaster Relief",
         description: "Acting as a vital lifeline in times of crisis, our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter, while our long-term commitment focuses on helping communities recover, rebuild, and regain their self-sufficiency after the disaster has passed.",
-        image_url: "/images/sf-img6.jpg",
+        image_url: "/images/sf-img6.jpeg",
         icon_class: "fa-hands-helping"
       },
       {
@@ -231,20 +231,34 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    // Get blogs from localStorage (same as events page)
-    const loadBlogs = () => {
+    // Get blogs from API or use defaults
+    const loadBlogs = async () => {
+      try {
+        // Try to fetch from API first
+        const response = await fetch('/api/events?limit=6');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data && data.data.length > 0) {
+            setBlogs(data.data);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading blogs from API:', error);
+      }
+      
+      // Fallback to localStorage
       try {
         const savedBlogs = localStorage.getItem('events');
         const allBlogs = savedBlogs ? JSON.parse(savedBlogs) : [];
-        // Get latest 5 blogs for home page, or use defaults
         if (allBlogs && allBlogs.length > 0) {
-          const latestBlogs = allBlogs.slice(0, 5);
+          const latestBlogs = allBlogs.slice(0, 6);
           setBlogs(latestBlogs);
         } else {
           setBlogs(getDefaultBlogs());
         }
       } catch (error) {
-        console.error('Error loading blogs:', error);
+        console.error('Error loading blogs from localStorage:', error);
         setBlogs(getDefaultBlogs());
       }
     };
@@ -271,7 +285,7 @@ const Home = () => {
         id: '3',
         title: 'Provide Emergency Aid During Crisis',
         description: 'Our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter to affected communities.',
-        image: '/images/sf-img6.jpg',
+        image: '/images/sf-img6.jpeg',
         date: new Date().toISOString()
       },
       {
@@ -303,11 +317,11 @@ const Home = () => {
       { id: 1, image_url: '/images/sf-img1.jpg', title: 'Community Support' },
       { id: 2, image_url: '/images/sf-img2.jpg', title: 'Education Program' },
       { id: 3, image_url: '/images/sf-img3.jpg', title: 'Medical Camp' },
-      { id: 4, image_url: '/images/sf-img4.jpg', title: 'Food Distribution' },
-      { id: 5, image_url: '/images/sf-img5.jpg', title: 'Clean Water Initiative' },
-      { id: 6, image_url: '/images/sf-img6.jpg', title: 'Vocational Training' },
+      { id: 4, image_url: '/images/sf-img4.webp', title: 'Food Distribution' },
+      { id: 5, image_url: '/images/sf-img5.jpeg', title: 'Clean Water Initiative' },
+      { id: 6, image_url: '/images/sf-img6.jpeg', title: 'Vocational Training' },
       { id: 7, image_url: '/images/sf-img7.jpg', title: 'Women Empowerment' },
-      { id: 8, image_url: '/images/sf-img8.jpg', title: 'Child Welfare' },
+      { id: 8, image_url: '/images/sf-img8.webp', title: 'Child Welfare' },
       { id: 9, image_url: '/images/sf-img9.jpg', title: 'Community Building' },
       { id: 10, image_url: '/images/sf-img10.jpg', title: 'Healthcare Services' },
       { id: 11, image_url: '/images/sf-img11.jpg', title: 'Emergency Relief' },
@@ -773,69 +787,69 @@ const Home = () => {
             ) : (
               // Fallback to default blogs if no blogs are available
               <>
-                <div className="blog-card">
-                  <div className="blog-image">
-                    <img src="/images/edu-img.jpg" alt="Sponsor a Child's Education" />
-                    <div className="blog-overlay">
+            <div className="blog-card">
+              <div className="blog-image">
+                    <img src="/images/Pakistani_Education.jpg" alt="Sponsor a Child's Education" />
+                <div className="blog-overlay">
                       <h3>Sponsor a Child's Education Today</h3>
                       <Link to="/blog/1" className="read-more">
-                        Read More <i className="fas fa-arrow-right"></i>
-                      </Link>
-                    </div>
-                  </div>
+                    Read More <i className="fas fa-arrow-right"></i>
+                  </Link>
                 </div>
+              </div>
+            </div>
 
-                <div className="blog-card">
-                  <div className="blog-image">
-                    <img src="/images/home.jpg" alt="Fund a Home" />
-                    <div className="blog-overlay">
+            <div className="blog-card">
+              <div className="blog-image">
+                    <img src="/images/home-banner-bg.jpg" alt="Fund a Home" />
+                <div className="blog-overlay">
                       <h3>Fund a Home for a Family in Need</h3>
-                      <Link to="/blog/2" className="read-more">
-                        Read More <i className="fas fa-arrow-right"></i>
-                      </Link>
-                    </div>
-                  </div>
+                  <Link to="/blog/2" className="read-more">
+                    Read More <i className="fas fa-arrow-right"></i>
+                  </Link>
                 </div>
+              </div>
+            </div>
 
-                <div className="blog-card">
-                  <div className="blog-image">
-                    <img src="/images/sf-img6.jpg" alt="Emergency Aid" />
-                    <div className="blog-overlay">
+            <div className="blog-card">
+              <div className="blog-image">
+                    <img src="/images/sallar_img3.jpg" alt="Emergency Aid" />
+                <div className="blog-overlay">
                       <h3>Provide Emergency Aid During Crisis</h3>
-                      <Link to="/blog/3" className="read-more">
-                        Read More <i className="fas fa-arrow-right"></i>
-                      </Link>
-                    </div>
-                  </div>
+                  <Link to="/blog/3" className="read-more">
+                    Read More <i className="fas fa-arrow-right"></i>
+                  </Link>
                 </div>
+              </div>
+            </div>
 
-                <div className="blog-card">
-                  <div className="blog-image">
-                    <img src="/images/women-img.jpg" alt="Empower Women" />
-                    <div className="blog-overlay">
+            <div className="blog-card">
+              <div className="blog-image">
+                    <img src="/images/997107-women-1448317966.jpg" alt="Empower Women" />
+                <div className="blog-overlay">
                       <h3>Empower a Woman Today</h3>
-                      <Link to="/blog/4" className="read-more">
-                        Read More <i className="fas fa-arrow-right"></i>
-                      </Link>
-                    </div>
-                  </div>
+                  <Link to="/blog/4" className="read-more">
+                    Read More <i className="fas fa-arrow-right"></i>
+                  </Link>
                 </div>
+              </div>
+            </div>
 
-                <div className="blog-card">
-                  <div className="blog-image">
-                    <img src="/images/sf-img9.jpg" alt="Medical Camp" />
-                    <div className="blog-overlay">
+            <div className="blog-card">
+              <div className="blog-image">
+                    <img src="/images/sallar_img5.jpg" alt="Medical Camp" />
+                <div className="blog-overlay">
                       <h3>Support a Medical Camp</h3>
-                      <Link to="/blog/5" className="read-more">
-                        Read More <i className="fas fa-arrow-right"></i>
-                      </Link>
-                    </div>
-                  </div>
+                  <Link to="/blog/5" className="read-more">
+                    Read More <i className="fas fa-arrow-right"></i>
+                  </Link>
                 </div>
+              </div>
+            </div>
 
                 <div className="blog-card">
                   <div className="blog-image">
-                    <img src="/images/zakat-img.jpg" alt="Zakat Campaign" />
+                    <img src="/images/sallar_img6.webp" alt="Zakat Campaign" />
                     <div className="blog-overlay">
                       <h3>Calculate & Donate Your Zakat</h3>
                       <Link to="/blog/6" className="read-more">

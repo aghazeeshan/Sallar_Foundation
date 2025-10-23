@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { promisePool } = require('../config/database');
 const { authenticateToken, requireModerator } = require('../middleware/auth');
+const emailService = require('../services/emailService');
 
 const router = express.Router();
 
@@ -136,6 +137,22 @@ router.post('/', [
       amount, currency, payment_method, donation_type,
       message, is_anonymous, transaction_id
     ]);
+
+    // Send email notification
+    try {
+      await emailService.sendDonationEmail({
+        name: donor_name,
+        email: donor_email,
+        phone: donor_phone,
+        amount,
+        currency,
+        payment_method,
+        message
+      });
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      // Don't fail the request if email fails
+    }
 
     res.status(201).json({
       success: true,
