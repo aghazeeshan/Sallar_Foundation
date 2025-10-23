@@ -12,9 +12,20 @@ import './Home.css';
 
 const getHeroStyle = (activeBanner) => {
   const defaultBg = `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${process.env.PUBLIC_URL + '/images/bg.jpg'})`;
-  const bannerBg = activeBanner?.image_url 
-    ? `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(http://localhost:5000${activeBanner.image_url})`
-    : defaultBg;
+  
+  let bannerBg = defaultBg;
+  if (activeBanner?.image_url) {
+    // Check if it's a full URL or a relative path
+    if (activeBanner.image_url.startsWith('http')) {
+      bannerBg = `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${activeBanner.image_url})`;
+    } else if (activeBanner.image_url.startsWith('/uploads/')) {
+      // Backend uploaded image
+      bannerBg = `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(http://localhost:5000${activeBanner.image_url})`;
+    } else {
+      // Local image from public folder
+      bannerBg = `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${process.env.PUBLIC_URL}${activeBanner.image_url})`;
+    }
+  }
   
   console.log('Banner data:', activeBanner);
   console.log('Banner image URL:', activeBanner?.image_url);
@@ -40,36 +51,160 @@ const Home = () => {
     const loadBanners = async () => {
       try {
         const bannersData = await bannerService.getAllBanners();
+        // If we get data from backend, use it, otherwise use defaults
+        if (bannersData && bannersData.length > 0) {
         setBanners(bannersData);
+        } else {
+          setBanners(getDefaultBanners());
+        }
       } catch (error) {
         console.error('Error loading banners:', error);
-        setBanners([]);
+        // Fallback to hardcoded banners when backend is not available
+        setBanners(getDefaultBanners());
       }
     };
     loadBanners();
   }, []);
+
+  const getDefaultBanners = () => {
+    return [
+      {
+        id: 1,
+        title: "Building Hope, One Life at a Time",
+        sub_heading: "Children's Education",
+        description: "We believe every child deserves the chance to learn and thrive. Our education initiative unlocks potential by creating quality learning environments, providing essential supplies like books and uniforms, and supporting nutritional and emotional well-being to ensure that poverty is not a barrier to a child's dreams and a brighter future.",
+        image_url: "/images/img8.jpg",
+        button_text: "Sponsor a Child's Education",
+        link_url: "/donate",
+        text_alignment: "left"
+      },
+      {
+        id: 2,
+        title: "Building Hope, One Life at a Time",
+        sub_heading: "Shelter & Housing",
+        description: "We restore dignity and security by building safe, durable homes for families without shelter and reconstructing communities devastated by natural disasters. We provide more than just four walls; we provide a stable foundation from which families can rebuild their lives, seek opportunities, and foster growth away from vulnerability and fear.",
+        image_url: "/images/img10.jpg",
+        button_text: "Fund a Home",
+        link_url: "/donate",
+        text_alignment: "left"
+      },
+      {
+        id: 3,
+        title: "Building Hope, One Life at a Time",
+        sub_heading: "Flood & Disaster Relief",
+        description: "Acting as a vital lifeline in times of crisis, our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter, while our long-term commitment focuses on helping communities recover, rebuild, and regain their self-sufficiency after the disaster has passed.",
+        image_url: "/images/img3.jpg",
+        button_text: "Provide Emergency Aid",
+        link_url: "/donate",
+        text_alignment: "left"
+      },
+      {
+        id: 4,
+        title: "Building Hope, One Life at a Time",
+        sub_heading: "Women's Empowerment",
+        description: "We are dedicated to fostering women's empowerment by providing vocational training, resources, and support systems for those unable to work outside the home, enabling them to develop skills, generate sustainable income, and gain financial independence, thereby transforming their own lives and the futures of their families.",
+        image_url: "/images/img7.jpg",
+        button_text: "Empower a Woman Today",
+        link_url: "/donate",
+        text_alignment: "left"
+      },
+      {
+        id: 5,
+        title: "Building Hope, One Life at a Time",
+        sub_heading: "Medical Aid",
+        description: "Understanding that health is a fundamental human right, our medical aid program operates free health camps in underserved communities, offering critical consultations, treatments, and medications to those who need it most, ensuring that lack of funds never stands between an individual and their well-being.",
+        image_url: "/images/img1.jpg",
+        button_text: "Support a Medical Camp",
+        link_url: "/donate",
+        text_alignment: "left"
+      },
+      {
+        id: 6,
+        title: "Building Hope, One Life at a Time",
+        sub_heading: "Zakat Campaigning",
+        description: "We fulfill your religious obligation with transparency and profound impact, ensuring your Zakat reaches the most deserving recipients—including the poor, the needy, and the indebted—directly funding our life-changing work in education, shelter, food, and medical care to uplift entire communities in accordance with Islamic principles.",
+        image_url: "/images/img11.jpg",
+        button_text: "Calculate & Donate Your Zakat",
+        link_url: "/donate",
+        text_alignment: "left"
+      }
+    ];
+  };
 
   useEffect(() => {
     // Get all active services from API
     const loadServices = async () => {
       try {
         const servicesData = await serviceService.getAllServices();
+        // If we get data from backend, use it, otherwise use defaults
+        if (servicesData && servicesData.length > 0) {
         setServices(servicesData);
+        } else {
+          setServices(getDefaultServices());
+        }
       } catch (error) {
         console.error('Error loading services:', error);
-        setServices([]);
+        // Fallback to hardcoded services when backend is not available
+        setServices(getDefaultServices());
       }
     };
     loadServices();
   }, []);
 
+  const getDefaultServices = () => {
+    return [
+      {
+        id: 1,
+        title: "Children's Education",
+        description: "We believe every child deserves the chance to learn and thrive. Our education initiative unlocks potential by creating quality learning environments, providing essential supplies like books and uniforms, and supporting nutritional and emotional well-being to ensure that poverty is not a barrier to a child's dreams and a brighter future.",
+        image_url: "/images/img8.jpg",
+        icon_class: "fa-graduation-cap"
+      },
+      {
+        id: 2,
+        title: "Shelter & Housing",
+        description: "We restore dignity and security by building safe, durable homes for families without shelter and reconstructing communities devastated by natural disasters. We provide more than just four walls; we provide a stable foundation from which families can rebuild their lives, seek opportunities, and foster growth away from vulnerability and fear.",
+        image_url: "/images/img10.jpg",
+        icon_class: "fa-home"
+      },
+      {
+        id: 3,
+        title: "Flood & Disaster Relief",
+        description: "Acting as a vital lifeline in times of crisis, our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter, while our long-term commitment focuses on helping communities recover, rebuild, and regain their self-sufficiency after the disaster has passed.",
+        image_url: "/images/img3.jpg",
+        icon_class: "fa-hands-helping"
+      },
+      {
+        id: 4,
+        title: "Women's Empowerment",
+        description: "We are dedicated to fostering women's empowerment by providing vocational training, resources, and support systems for those unable to work outside the home, enabling them to develop skills, generate sustainable income, and gain financial independence, thereby transforming their own lives and the futures of their families.",
+        image_url: "/images/img7.jpg",
+        icon_class: "fa-venus"
+      },
+      {
+        id: 5,
+        title: "Medical Aid",
+        description: "Understanding that health is a fundamental human right, our medical aid program operates free health camps in underserved communities, offering critical consultations, treatments, and medications to those who need it most, ensuring that lack of funds never stands between an individual and their well-being.",
+        image_url: "/images/img1.jpg",
+        icon_class: "fa-medkit"
+      },
+      {
+        id: 6,
+        title: "Zakat Campaigning",
+        description: "We fulfill your religious obligation with transparency and profound impact, ensuring your Zakat reaches the most deserving recipients—including the poor, the needy, and the indebted—directly funding our life-changing work in education, shelter, food, and medical care to uplift entire communities in accordance with Islamic principles.",
+        image_url: "/images/img11.jpg",
+        icon_class: "fa-mosque"
+      }
+    ];
+  };
+
   useEffect(() => {
     // Get gallery images from API (limit to 12 for home page)
     const loadGalleryImages = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/gallery?limit=12');
+        const response = await fetch('/api/gallery?limit=12');
         const data = await response.json();
-        if (data.success && data.data) {
+        if (data.success && data.data && data.data.length > 0) {
           setGalleryImages(data.data);
         } else {
           // Fallback to default images
@@ -90,31 +225,75 @@ const Home = () => {
       try {
         const savedBlogs = localStorage.getItem('events');
         const allBlogs = savedBlogs ? JSON.parse(savedBlogs) : [];
-        // Get latest 5 blogs for home page
-        const latestBlogs = allBlogs.slice(0, 5);
-        setBlogs(latestBlogs);
+        // Get latest 5 blogs for home page, or use defaults
+        if (allBlogs && allBlogs.length > 0) {
+          const latestBlogs = allBlogs.slice(0, 5);
+          setBlogs(latestBlogs);
+        } else {
+          setBlogs(getDefaultBlogs());
+        }
       } catch (error) {
         console.error('Error loading blogs:', error);
-        setBlogs([]);
+        setBlogs(getDefaultBlogs());
       }
     };
     loadBlogs();
   }, []);
 
+  const getDefaultBlogs = () => {
+    return [
+      {
+        id: '1',
+        title: "Sponsor a Child's Education Today",
+        description: 'We believe every child deserves the chance to learn and thrive. Our education initiative creates quality learning environments and provides essential supplies.',
+        image: '/images/img8.jpg',
+        date: new Date().toISOString()
+      },
+      {
+        id: '2',
+        title: 'Fund a Home for a Family in Need',
+        description: 'We restore dignity and security by building safe, durable homes for families without shelter and reconstructing communities devastated by disasters.',
+        image: '/images/img10.jpg',
+        date: new Date().toISOString()
+      },
+      {
+        id: '3',
+        title: 'Provide Emergency Aid During Crisis',
+        description: 'Our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter to affected communities.',
+        image: '/images/img3.jpg',
+        date: new Date().toISOString()
+      },
+      {
+        id: '4',
+        title: 'Empower a Woman Today',
+        description: 'We foster women\'s empowerment by providing vocational training, resources, and support systems to help them achieve financial independence.',
+        image: '/images/img7.jpg',
+        date: new Date().toISOString()
+      },
+      {
+        id: '5',
+        title: 'Support a Medical Camp',
+        description: 'Our medical aid program operates free health camps in underserved communities, offering critical consultations, treatments, and medications.',
+        image: '/images/img1.jpg',
+        date: new Date().toISOString()
+      }
+    ];
+  };
+
   const getDefaultGalleryImages = () => {
     return [
-      { id: 1, image_url: '/images/img1.jpg', title: 'Gallery 1' },
-      { id: 2, image_url: '/images/img2.jpg', title: 'Gallery 2' },
-      { id: 3, image_url: '/images/img3.jpg', title: 'Gallery 3' },
-      { id: 4, image_url: '/images/img4.jpg', title: 'Gallery 4' },
-      { id: 5, image_url: '/images/img5.jpg', title: 'Gallery 5' },
-      { id: 6, image_url: '/images/img6.jpg', title: 'Gallery 6' },
-      { id: 7, image_url: '/images/img7.jpg', title: 'Gallery 7' },
-      { id: 8, image_url: '/images/img8.jpg', title: 'Gallery 8' },
-      { id: 9, image_url: '/images/img9.jpg', title: 'Gallery 9' },
-      { id: 10, image_url: '/images/img10.jpg', title: 'Gallery 10' },
-      { id: 11, image_url: '/images/img11.jpg', title: 'Gallery 11' },
-      { id: 12, image_url: '/images/img12.jpg', title: 'Gallery 12' },
+      { id: 1, image_url: '/images/img1.jpg', title: 'Community Support' },
+      { id: 2, image_url: '/images/img2.jpg', title: 'Education Program' },
+      { id: 3, image_url: '/images/img3.jpg', title: 'Medical Camp' },
+      { id: 4, image_url: '/images/img4.jpg', title: 'Food Distribution' },
+      { id: 5, image_url: '/images/img5.jpg', title: 'Clean Water Initiative' },
+      { id: 6, image_url: '/images/img6.jpg', title: 'Vocational Training' },
+      { id: 7, image_url: '/images/img7.jpg', title: 'Women Empowerment' },
+      { id: 8, image_url: '/images/img8.jpg', title: 'Child Welfare' },
+      { id: 9, image_url: '/images/img9.jpg', title: 'Community Building' },
+      { id: 10, image_url: '/images/img10.jpg', title: 'Healthcare Services' },
+      { id: 11, image_url: '/images/img11.jpg', title: 'Emergency Relief' },
+      { id: 12, image_url: '/images/img12.jpg', title: 'Shelter Program' },
     ];
   };
 
@@ -179,7 +358,7 @@ const Home = () => {
   return (
     <div className="home">
       <div className="hero-banner" style={getHeroStyle(currentBanner)}>
-        <div className="hero-content" style={{ textAlign: currentBanner?.text_alignment || 'center' }}>
+        <div className="hero-content" style={{ textAlign: currentBanner?.text_alignment || 'left' }}>
           {currentBanner?.sub_heading && <span className="subtitle">{currentBanner.sub_heading}</span>}
           {currentBanner?.title && <h1 className="title">{currentBanner.title}</h1>}
           {currentBanner?.description && <p className="description">{currentBanner.description}</p>}
@@ -322,9 +501,12 @@ const Home = () => {
               >
                 {services.map((service, index) => {
                   // Construct proper image URL
-                  const imageUrl = service.image_url?.startsWith('/uploads/') 
-                    ? `http://localhost:5000${service.image_url}` 
-                    : service.image_url;
+                  let imageUrl = service.image_url;
+                  if (service.image_url?.startsWith('/uploads/')) {
+                    imageUrl = `http://localhost:5000${service.image_url}`;
+                  } else if (service.image_url && !service.image_url.startsWith('http')) {
+                    imageUrl = `${process.env.PUBLIC_URL}${service.image_url}`;
+                  }
                   
                   return (
                     <SwiperSlide key={service.id}>
@@ -351,22 +533,7 @@ const Home = () => {
               <div className="services-grid">
                 <div className="service-card">
                   <div className="service-image">
-                    <img src="/images/img10.jpg" alt="Healthy Foods" />
-                    <div className="service-icon">
-                    <div className="charity-icon green">
-                        <i className="fas fa-utensils"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="service-content">
-                    <h3>Medical Camp</h3>
-                    <p>Every month we organize a medical camp in rural areas in order to meet people and provide them free medication. </p>
-                  </div>
-                </div>
-
-                <div className="service-card">
-                  <div className="service-image">
-                    <img src="/images/img6.jpg" alt="Education" />
+                    <img src="/images/img8.jpg" alt="Children's Education" />
                     <div className="service-icon">
                     <div className="charity-icon green">
                         <i className="fas fa-graduation-cap"></i>
@@ -374,23 +541,38 @@ const Home = () => {
                     </div>
                   </div>
                   <div className="service-content">
-                    <h3>Employment Opportunity</h3>
-                    <p>We provide the employment like Buying a Rickshaw for monthly income We buy an auto rickshaw and lease it to drivers or use it for a transport business.</p>
+                    <h3>Children's Education</h3>
+                    <p>We believe every child deserves the chance to learn and thrive. Our education initiative unlocks potential by creating quality learning environments.</p>
                   </div>
                 </div>
 
                 <div className="service-card">
                   <div className="service-image">
-                    <img src="/images/img7.jpg" alt="Medical Help" />
+                    <img src="/images/img10.jpg" alt="Shelter & Housing" />
                     <div className="service-icon">
                     <div className="charity-icon green">
-                        <i className="fas fa-medkit"></i>
+                        <i className="fas fa-home"></i>
                       </div>
                     </div>
                   </div>
                   <div className="service-content">
-                    <h3>Sewing Machines</h3>
-                    <p>Providing sewing machines to women who can work from home on stitching, tailoring, embroidery, or making garments.</p>
+                    <h3>Shelter & Housing</h3>
+                    <p>We restore dignity and security by building safe, durable homes for families without shelter and reconstructing communities devastated by natural disasters.</p>
+                  </div>
+                </div>
+
+                <div className="service-card">
+                  <div className="service-image">
+                    <img src="/images/img3.jpg" alt="Flood & Disaster Relief" />
+                    <div className="service-icon">
+                    <div className="charity-icon green">
+                        <i className="fas fa-hands-helping"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="service-content">
+                    <h3>Flood & Disaster Relief</h3>
+                    <p>Acting as a vital lifeline in times of crisis, our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter.</p>
                   </div>
                 </div>
               </div>
@@ -573,65 +755,65 @@ const Home = () => {
             ) : (
               // Fallback to default blogs if no blogs are available
               <>
-                <div className="blog-card">
-                  <div className="blog-image">
-                    <img src="/images/img10.jpg" alt="Blog 1" />
-                    <div className="blog-overlay">
-                      <h3>Empowering Communities Through Shelter and Support</h3>
-                      <Link to="/blog/17370088595141" className="read-more">
-                        Read More <i className="fas fa-arrow-right"></i>
-                      </Link>
-                    </div>
-                  </div>
+            <div className="blog-card">
+              <div className="blog-image">
+                    <img src="/images/img8.jpg" alt="Sponsor a Child's Education" />
+                <div className="blog-overlay">
+                      <h3>Sponsor a Child's Education Today</h3>
+                      <Link to="/blog/1" className="read-more">
+                    Read More <i className="fas fa-arrow-right"></i>
+                  </Link>
                 </div>
+              </div>
+            </div>
 
-                <div className="blog-card">
-                  <div className="blog-image">
-                    <img src="/images/img1.jpg" alt="Blog 2" />
-                    <div className="blog-overlay">
-                      <h3>Health for All: Our Monthly Medical Camps</h3>
-                      <Link to="/blog/2" className="read-more">
-                        Read More <i className="fas fa-arrow-right"></i>
-                      </Link>
-                    </div>
-                  </div>
+            <div className="blog-card">
+              <div className="blog-image">
+                    <img src="/images/img10.jpg" alt="Fund a Home" />
+                <div className="blog-overlay">
+                      <h3>Fund a Home for a Family in Need</h3>
+                  <Link to="/blog/2" className="read-more">
+                    Read More <i className="fas fa-arrow-right"></i>
+                  </Link>
                 </div>
+              </div>
+            </div>
 
-                <div className="blog-card">
-                  <div className="blog-image">
-                    <img src="/images/img6.jpg" alt="Blog 3" />
-                    <div className="blog-overlay">
-                      <h3>Creating Opportunities, One Rickshaw at a Time</h3>
-                      <Link to="/blog/3" className="read-more">
-                        Read More <i className="fas fa-arrow-right"></i>
-                      </Link>
-                    </div>
-                  </div>
+            <div className="blog-card">
+              <div className="blog-image">
+                    <img src="/images/img3.jpg" alt="Emergency Aid" />
+                <div className="blog-overlay">
+                      <h3>Provide Emergency Aid During Crisis</h3>
+                  <Link to="/blog/3" className="read-more">
+                    Read More <i className="fas fa-arrow-right"></i>
+                  </Link>
                 </div>
+              </div>
+            </div>
 
-                <div className="blog-card">
-                  <div className="blog-image">
-                    <img src="/images/img9.jpg" alt="Blog 4" />
-                    <div className="blog-overlay">
-                      <h3>Empowering Women with Sewing Machines</h3>
-                      <Link to="/blog/4" className="read-more">
-                        Read More <i className="fas fa-arrow-right"></i>
-                      </Link>
-                    </div>
-                  </div>
+            <div className="blog-card">
+              <div className="blog-image">
+                    <img src="/images/img7.jpg" alt="Empower Women" />
+                <div className="blog-overlay">
+                      <h3>Empower a Woman Today</h3>
+                  <Link to="/blog/4" className="read-more">
+                    Read More <i className="fas fa-arrow-right"></i>
+                  </Link>
                 </div>
+              </div>
+            </div>
 
-                <div className="blog-card">
-                  <div className="blog-image">
-                    <img src="/images/img4.jpg" alt="Blog 5" />
-                    <div className="blog-overlay">
-                      <h3>Street Vending: Small Carts, Big Impact</h3>
-                      <Link to="/blog/5" className="read-more">
-                        Read More <i className="fas fa-arrow-right"></i>
-                      </Link>
-                    </div>
-                  </div>
+            <div className="blog-card">
+              <div className="blog-image">
+                    <img src="/images/img1.jpg" alt="Medical Camp" />
+                <div className="blog-overlay">
+                      <h3>Support a Medical Camp</h3>
+                  <Link to="/blog/5" className="read-more">
+                    Read More <i className="fas fa-arrow-right"></i>
+                  </Link>
                 </div>
+              </div>
+            </div>
               </>
             )}
           </div>
@@ -648,7 +830,26 @@ const Home = () => {
           </div>
           
           <div className="gallery-grid">
-            {galleryImages.map((image, index) => (
+            {galleryImages.map((image, index) => {
+              // Determine image URL based on source
+              let imageUrl = image.image_url;
+              if (imageUrl) {
+                if (imageUrl.startsWith('http')) {
+                  // Full URL, use as is
+                  imageUrl = imageUrl;
+                } else if (imageUrl.startsWith('/uploads/')) {
+                  // Backend uploaded image
+                  imageUrl = `/api${imageUrl}`;
+                } else if (imageUrl.startsWith('/images/')) {
+                  // Local public image
+                  imageUrl = imageUrl;
+                } else {
+                  // Assume local public image
+                  imageUrl = imageUrl;
+                }
+              }
+              
+              return (
               <div 
                 key={image.id || index} 
                 className="gallery-item"
@@ -658,14 +859,15 @@ const Home = () => {
                 }}
               >
                 <img 
-                  src={image.image_url.startsWith('http') ? image.image_url : `http://localhost:5000${image.image_url}`} 
+                    src={imageUrl} 
                   alt={image.title || `Gallery ${index + 1}`} 
                 />
                 <div className="gallery-hover">
                   <i className="fas fa-eye"></i>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="gallery-footer">
@@ -681,7 +883,14 @@ const Home = () => {
               <i className="fas fa-chevron-left"></i>
             </button>
             <img 
-              src={typeof selectedImage === 'string' ? selectedImage : (selectedImage.image_url?.startsWith('http') ? selectedImage.image_url : `http://localhost:5000${selectedImage.image_url}`)} 
+              src={(() => {
+                if (typeof selectedImage === 'string') return selectedImage;
+                let imgUrl = selectedImage.image_url;
+                if (!imgUrl) return '';
+                if (imgUrl.startsWith('http')) return imgUrl;
+                if (imgUrl.startsWith('/uploads/')) return `/api${imgUrl}`;
+                return imgUrl;
+              })()} 
               alt={selectedImage.title || "Preview"} 
             />
             <button className="nav-btn next" onClick={handleNextImage}>

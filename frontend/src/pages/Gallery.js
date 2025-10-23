@@ -38,18 +38,18 @@ const Gallery = () => {
 
   const getDefaultImages = () => {
     return [
-      { id: 1, fullUrl: '/images/img1.jpg', title: 'Gallery 1', category: 'general' },
-      { id: 2, fullUrl: '/images/img2.jpg', title: 'Gallery 2', category: 'general' },
-      { id: 3, fullUrl: '/images/img3.jpg', title: 'Gallery 3', category: 'general' },
-      { id: 4, fullUrl: '/images/img4.jpg', title: 'Gallery 4', category: 'general' },
-      { id: 5, fullUrl: '/images/img5.jpg', title: 'Gallery 5', category: 'general' },
-      { id: 6, fullUrl: '/images/img6.jpg', title: 'Gallery 6', category: 'general' },
-      { id: 7, fullUrl: '/images/img7.jpg', title: 'Gallery 7', category: 'general' },
-      { id: 8, fullUrl: '/images/img8.jpg', title: 'Gallery 8', category: 'general' },
-      { id: 9, fullUrl: '/images/img9.jpg', title: 'Gallery 9', category: 'general' },
-      { id: 10, fullUrl: '/images/img10.jpg', title: 'Gallery 10', category: 'general' },
-      { id: 11, fullUrl: '/images/img11.jpg', title: 'Gallery 11', category: 'general' },
-      { id: 12, fullUrl: '/images/img12.jpg', title: 'Gallery 12', category: 'general' },
+      { id: 1, fullUrl: '/images/sf-img1.jpg', title: 'Gallery 1', category: 'general' },
+      { id: 2, fullUrl: '/images/sf-img2.jpg', title: 'Gallery 2', category: 'general' },
+      { id: 3, fullUrl: '/images/sf-img3.jpg', title: 'Gallery 3', category: 'general' },
+      { id: 4, fullUrl: '/images/sf-img4.jpg', title: 'Gallery 4', category: 'general' },
+      { id: 5, fullUrl: '/images/sf-img5.jpg', title: 'Gallery 5', category: 'general' },
+      { id: 6, fullUrl: '/images/sf-img6.jpg', title: 'Gallery 6', category: 'general' },
+      { id: 7, fullUrl: '/images/sf-img7.jpg', title: 'Gallery 7', category: 'general' },
+      { id: 8, fullUrl: '/images/sf-img8.jpg', title: 'Gallery 8', category: 'general' },
+      { id: 9, fullUrl: '/images/sf-img9.jpg', title: 'Gallery 9', category: 'general' },
+      { id: 10, fullUrl: '/images/sf-img10.jpg', title: 'Gallery 10', category: 'general' },
+      { id: 11, fullUrl: '/images/sf-img11.jpg', title: 'Gallery 11', category: 'general' },
+      { id: 12, fullUrl: '/images/sf-img12.jpg', title: 'Gallery 12', category: 'general' },
     ];
   };
 
