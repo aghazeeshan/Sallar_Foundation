@@ -71,60 +71,71 @@ const Home = () => {
       {
         id: 1,
         title: "Building Hope, One Life at a Time",
-        sub_heading: "Children's Education",
-        description: "We believe every child deserves the chance to learn and thrive. Our education initiative unlocks potential by creating quality learning environments, providing essential supplies like books and uniforms, and supporting nutritional and emotional well-being to ensure that poverty is not a barrier to a child's dreams and a brighter future.",
-        image_url: "/images/img8.jpg",
-        button_text: "Sponsor a Child's Education",
+        sub_heading: "Join Our Mission ",
+        description: "Together, we break the cycles of poverty and despair by educating children, building safe homes for the vulnerable, providing critical aid during floods, empowering women to achieve economic independence, and delivering essential medical care through free camps.",
+        image_url: "/images/fund.jpg",
+        button_text: "Donate Us",
         link_url: "/donate",
         text_alignment: "left"
       },
       {
         id: 2,
-        title: "Building Hope, One Life at a Time",
-        sub_heading: "Shelter & Housing",
+        title: "Shelter & Housing",
+        sub_heading: "Be Part of the Change",
         description: "We restore dignity and security by building safe, durable homes for families without shelter and reconstructing communities devastated by natural disasters. We provide more than just four walls; we provide a stable foundation from which families can rebuild their lives, seek opportunities, and foster growth away from vulnerability and fear.",
-        image_url: "/images/img10.jpg",
-        button_text: "Fund a Home",
+        image_url: "/images/home.jpg",
+        button_text: "Donate For Home",
         link_url: "/donate",
         text_alignment: "left"
       },
       {
         id: 3,
-        title: "Building Hope, One Life at a Time",
-        sub_heading: "Flood & Disaster Relief",
+        title: "Flood & Disaster Relief",
+        sub_heading: "Provide Emergency Aid",
         description: "Acting as a vital lifeline in times of crisis, our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter, while our long-term commitment focuses on helping communities recover, rebuild, and regain their self-sufficiency after the disaster has passed.",
-        image_url: "/images/img3.jpg",
-        button_text: "Provide Emergency Aid",
+        image_url: "/images/sf-img6.jpg",
+        button_text: "Donate For Flood",
         link_url: "/donate",
         text_alignment: "left"
       },
       {
         id: 4,
-        title: "Building Hope, One Life at a Time",
-        sub_heading: "Women's Empowerment",
+        title: "Women's Empowerment",
+        sub_heading: "Empower a Woman Today",
         description: "We are dedicated to fostering women's empowerment by providing vocational training, resources, and support systems for those unable to work outside the home, enabling them to develop skills, generate sustainable income, and gain financial independence, thereby transforming their own lives and the futures of their families.",
-        image_url: "/images/img7.jpg",
-        button_text: "Empower a Woman Today",
+        image_url: "/images/women-img.jpg",
+        button_text: "Donate For Women's Empowerment",
         link_url: "/donate",
         text_alignment: "left"
       },
       {
         id: 5,
-        title: "Building Hope, One Life at a Time",
-        sub_heading: "Medical Aid",
+        title: "Medical Aid",
+        sub_heading: "Support a Medical Camp",
         description: "Understanding that health is a fundamental human right, our medical aid program operates free health camps in underserved communities, offering critical consultations, treatments, and medications to those who need it most, ensuring that lack of funds never stands between an individual and their well-being.",
-        image_url: "/images/img1.jpg",
-        button_text: "Support a Medical Camp",
+        image_url: "/images/sf-img9.jpg",
+        button_text: "Donate For Medical Aid",
         link_url: "/donate",
         text_alignment: "left"
       },
       {
         id: 6,
-        title: "Building Hope, One Life at a Time",
-        sub_heading: "Zakat Campaigning",
+          title: "Zakat Campaigning",
+        sub_heading: "Calculate & Donate Your Zakat",
         description: "We fulfill your religious obligation with transparency and profound impact, ensuring your Zakat reaches the most deserving recipients—including the poor, the needy, and the indebted—directly funding our life-changing work in education, shelter, food, and medical care to uplift entire communities in accordance with Islamic principles.",
-        image_url: "/images/img11.jpg",
-        button_text: "Calculate & Donate Your Zakat",
+        image_url: "/images/zakat-img.jpg",
+        button_text: "Donate For Zakat Campaigning",
+        link_url: "/donate",
+        text_alignment: "left"
+      },
+
+      {
+        id: 7,
+          title: "Children's Education",
+        sub_heading: "Sponsor a Child's Education",
+        description: "We believe every child deserves the chance to learn and thrive. Our education initiative unlocks potential by creating quality learning environments, providing essential supplies like books and uniforms, and supporting nutritional and emotional well-being to ensure that poverty is not a barrier to a child's dreams and a brighter future.",
+        image_url: "/images/edu-img.jpg",
+        button_text: "Donate For Education",
         link_url: "/donate",
         text_alignment: "left"
       }
@@ -157,42 +168,42 @@ const Home = () => {
         id: 1,
         title: "Children's Education",
         description: "We believe every child deserves the chance to learn and thrive. Our education initiative unlocks potential by creating quality learning environments, providing essential supplies like books and uniforms, and supporting nutritional and emotional well-being to ensure that poverty is not a barrier to a child's dreams and a brighter future.",
-        image_url: "/images/img8.jpg",
+        image_url: "/images/edu-img.jpg",
         icon_class: "fa-graduation-cap"
       },
       {
         id: 2,
         title: "Shelter & Housing",
         description: "We restore dignity and security by building safe, durable homes for families without shelter and reconstructing communities devastated by natural disasters. We provide more than just four walls; we provide a stable foundation from which families can rebuild their lives, seek opportunities, and foster growth away from vulnerability and fear.",
-        image_url: "/images/img10.jpg",
+        image_url: "/images/home.jpg",
         icon_class: "fa-home"
       },
       {
         id: 3,
         title: "Flood & Disaster Relief",
         description: "Acting as a vital lifeline in times of crisis, our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter, while our long-term commitment focuses on helping communities recover, rebuild, and regain their self-sufficiency after the disaster has passed.",
-        image_url: "/images/img3.jpg",
+        image_url: "/images/sf-img6.jpg",
         icon_class: "fa-hands-helping"
       },
       {
         id: 4,
         title: "Women's Empowerment",
         description: "We are dedicated to fostering women's empowerment by providing vocational training, resources, and support systems for those unable to work outside the home, enabling them to develop skills, generate sustainable income, and gain financial independence, thereby transforming their own lives and the futures of their families.",
-        image_url: "/images/img7.jpg",
+        image_url: "/images/women-img.jpg",
         icon_class: "fa-venus"
       },
       {
         id: 5,
         title: "Medical Aid",
         description: "Understanding that health is a fundamental human right, our medical aid program operates free health camps in underserved communities, offering critical consultations, treatments, and medications to those who need it most, ensuring that lack of funds never stands between an individual and their well-being.",
-        image_url: "/images/img1.jpg",
+        image_url: "/images/sf-img9.jpg",
         icon_class: "fa-medkit"
       },
       {
         id: 6,
         title: "Zakat Campaigning",
         description: "We fulfill your religious obligation with transparency and profound impact, ensuring your Zakat reaches the most deserving recipients—including the poor, the needy, and the indebted—directly funding our life-changing work in education, shelter, food, and medical care to uplift entire communities in accordance with Islamic principles.",
-        image_url: "/images/img11.jpg",
+        image_url: "/images/zakat-img.jpg",
         icon_class: "fa-mosque"
       }
     ];
@@ -246,35 +257,42 @@ const Home = () => {
         id: '1',
         title: "Sponsor a Child's Education Today",
         description: 'We believe every child deserves the chance to learn and thrive. Our education initiative creates quality learning environments and provides essential supplies.',
-        image: '/images/img8.jpg',
+        image: '/images/edu-img.jpg',
         date: new Date().toISOString()
       },
       {
         id: '2',
         title: 'Fund a Home for a Family in Need',
         description: 'We restore dignity and security by building safe, durable homes for families without shelter and reconstructing communities devastated by disasters.',
-        image: '/images/img10.jpg',
+        image: '/images/home.jpg',
         date: new Date().toISOString()
       },
       {
         id: '3',
         title: 'Provide Emergency Aid During Crisis',
         description: 'Our emergency response teams provide immediate relief during floods by distributing clean water, food, and temporary shelter to affected communities.',
-        image: '/images/img3.jpg',
+        image: '/images/sf-img6.jpg',
         date: new Date().toISOString()
       },
       {
         id: '4',
         title: 'Empower a Woman Today',
         description: 'We foster women\'s empowerment by providing vocational training, resources, and support systems to help them achieve financial independence.',
-        image: '/images/img7.jpg',
+        image: '/images/women-img.jpg',
         date: new Date().toISOString()
       },
       {
         id: '5',
         title: 'Support a Medical Camp',
         description: 'Our medical aid program operates free health camps in underserved communities, offering critical consultations, treatments, and medications.',
-        image: '/images/img1.jpg',
+        image: '/images/sf-img9.jpg',
+        date: new Date().toISOString()
+      },
+      {
+        id: '6',
+        title: 'Calculate & Donate Your Zakat',
+        description: 'We fulfill your religious obligation with transparency, ensuring your Zakat reaches the most deserving recipients in accordance with Islamic principles.',
+        image: '/images/zakat-img.jpg',
         date: new Date().toISOString()
       }
     ];
@@ -282,18 +300,18 @@ const Home = () => {
 
   const getDefaultGalleryImages = () => {
     return [
-      { id: 1, image_url: '/images/img1.jpg', title: 'Community Support' },
-      { id: 2, image_url: '/images/img2.jpg', title: 'Education Program' },
-      { id: 3, image_url: '/images/img3.jpg', title: 'Medical Camp' },
-      { id: 4, image_url: '/images/img4.jpg', title: 'Food Distribution' },
-      { id: 5, image_url: '/images/img5.jpg', title: 'Clean Water Initiative' },
-      { id: 6, image_url: '/images/img6.jpg', title: 'Vocational Training' },
-      { id: 7, image_url: '/images/img7.jpg', title: 'Women Empowerment' },
-      { id: 8, image_url: '/images/img8.jpg', title: 'Child Welfare' },
-      { id: 9, image_url: '/images/img9.jpg', title: 'Community Building' },
-      { id: 10, image_url: '/images/img10.jpg', title: 'Healthcare Services' },
-      { id: 11, image_url: '/images/img11.jpg', title: 'Emergency Relief' },
-      { id: 12, image_url: '/images/img12.jpg', title: 'Shelter Program' },
+      { id: 1, image_url: '/images/sf-img1.jpg', title: 'Community Support' },
+      { id: 2, image_url: '/images/sf-img2.jpg', title: 'Education Program' },
+      { id: 3, image_url: '/images/sf-img3.jpg', title: 'Medical Camp' },
+      { id: 4, image_url: '/images/sf-img4.jpg', title: 'Food Distribution' },
+      { id: 5, image_url: '/images/sf-img5.jpg', title: 'Clean Water Initiative' },
+      { id: 6, image_url: '/images/sf-img6.jpg', title: 'Vocational Training' },
+      { id: 7, image_url: '/images/sf-img7.jpg', title: 'Women Empowerment' },
+      { id: 8, image_url: '/images/sf-img8.jpg', title: 'Child Welfare' },
+      { id: 9, image_url: '/images/sf-img9.jpg', title: 'Community Building' },
+      { id: 10, image_url: '/images/sf-img10.jpg', title: 'Healthcare Services' },
+      { id: 11, image_url: '/images/sf-img11.jpg', title: 'Emergency Relief' },
+      { id: 12, image_url: '/images/sf-img12.jpg', title: 'Shelter Program' },
     ];
   };
 
@@ -755,65 +773,77 @@ const Home = () => {
             ) : (
               // Fallback to default blogs if no blogs are available
               <>
-            <div className="blog-card">
-              <div className="blog-image">
-                    <img src="/images/img8.jpg" alt="Sponsor a Child's Education" />
-                <div className="blog-overlay">
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/edu-img.jpg" alt="Sponsor a Child's Education" />
+                    <div className="blog-overlay">
                       <h3>Sponsor a Child's Education Today</h3>
                       <Link to="/blog/1" className="read-more">
-                    Read More <i className="fas fa-arrow-right"></i>
-                  </Link>
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="blog-card">
-              <div className="blog-image">
-                    <img src="/images/img10.jpg" alt="Fund a Home" />
-                <div className="blog-overlay">
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/home.jpg" alt="Fund a Home" />
+                    <div className="blog-overlay">
                       <h3>Fund a Home for a Family in Need</h3>
-                  <Link to="/blog/2" className="read-more">
-                    Read More <i className="fas fa-arrow-right"></i>
-                  </Link>
+                      <Link to="/blog/2" className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="blog-card">
-              <div className="blog-image">
-                    <img src="/images/img3.jpg" alt="Emergency Aid" />
-                <div className="blog-overlay">
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/sf-img6.jpg" alt="Emergency Aid" />
+                    <div className="blog-overlay">
                       <h3>Provide Emergency Aid During Crisis</h3>
-                  <Link to="/blog/3" className="read-more">
-                    Read More <i className="fas fa-arrow-right"></i>
-                  </Link>
+                      <Link to="/blog/3" className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="blog-card">
-              <div className="blog-image">
-                    <img src="/images/img7.jpg" alt="Empower Women" />
-                <div className="blog-overlay">
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/women-img.jpg" alt="Empower Women" />
+                    <div className="blog-overlay">
                       <h3>Empower a Woman Today</h3>
-                  <Link to="/blog/4" className="read-more">
-                    Read More <i className="fas fa-arrow-right"></i>
-                  </Link>
+                      <Link to="/blog/4" className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="blog-card">
-              <div className="blog-image">
-                    <img src="/images/img1.jpg" alt="Medical Camp" />
-                <div className="blog-overlay">
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/sf-img9.jpg" alt="Medical Camp" />
+                    <div className="blog-overlay">
                       <h3>Support a Medical Camp</h3>
-                  <Link to="/blog/5" className="read-more">
-                    Read More <i className="fas fa-arrow-right"></i>
-                  </Link>
+                      <Link to="/blog/5" className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+
+                <div className="blog-card">
+                  <div className="blog-image">
+                    <img src="/images/zakat-img.jpg" alt="Zakat Campaign" />
+                    <div className="blog-overlay">
+                      <h3>Calculate & Donate Your Zakat</h3>
+                      <Link to="/blog/6" className="read-more">
+                        Read More <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
           </div>
