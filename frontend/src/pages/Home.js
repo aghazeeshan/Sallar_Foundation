@@ -302,13 +302,7 @@ const Home = () => {
         image: '/images/sf-img9.jpg',
         date: new Date().toISOString()
       },
-      {
-        id: '6',
-        title: 'Calculate & Donate Your Zakat',
-        description: 'We fulfill your religious obligation with transparency, ensuring your Zakat reaches the most deserving recipients in accordance with Islamic principles.',
-        image: '/images/zakat-img.jpg',
-        date: new Date().toISOString()
-      }
+     
     ];
   };
 
